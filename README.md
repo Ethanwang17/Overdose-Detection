@@ -107,30 +107,3 @@ A React Native application that monitors wearable biometric data to detect poten
 | Medical algorithm validation | Algorithms could be wrong or misleading | Developers are not liable for medical validation |
 | Monetization approval | Google/Apple may reject monetization plans | Follow platform guidelines strictly; implement early |
 | Budget overrun | Unexpected bug fixes or tech debt | Monitor burn rate; use free/low-cost tooling where possible |
-
----
-
-## Team
-
-**Gagan Singh** — Technical Program Manager, Microsoft
-- Background in product management, AI, and network infrastructure
-- Led product on *Mindscape*, an AI app using biometric data for mental health insights
-- Experience at Microsoft, Cisco Meraki, and Amazon
-- B.S. Informatics & B.A. Business, University of Washington; pursuing M.S. CS, Georgia Tech
-
-**Ethan Wang** — Full-Stack Developer, TSMC
-- Frontend/backend engineering, UI design, and data applications
-- Led frontend for *Mindscape*; built .NET systems for TSMC and Hanford cleanup
-- Experience in health tech and clean energy sectors
-- B.S. Informatics, University of Washington
-
-**Viru Repalle** — Cybersecurity Researcher, PNNL
-- Builds secure software for national critical infrastructure resilience
-- Skilled in React, software engineering, and cybersecurity frameworks (C2M2)
-- B.S. Informatics, University of Washington; pursuing M.S. Cybersecurity, Georgia Tech
-
-**Sachin Dhami** — Technical PM & HCI Researcher, Gekko Corporation
-- Focus on Human-Computer Interaction and inclusive UX design
-- Led development at Gekko Corp; researched generative AI in UX at UW
-- Experience across UX research, product, and engineering roles
-- B.S. Informatics, University of Washington
