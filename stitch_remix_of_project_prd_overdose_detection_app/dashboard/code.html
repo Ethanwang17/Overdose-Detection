@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#ff635b",
+              "secondary-fixed-dim": "#9ecaff",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#d1e4ff",
+              "on-tertiary-fixed": "#410003",
+              "surface-container": "#eeeeee",
+              "surface-container-high": "#e8e8e8",
+              "on-secondary-fixed": "#001d36",
+              "on-primary-fixed-variant": "#343d96",
+              "outline": "#767683",
+              "surface-bright": "#f9f9f9",
+              "on-primary-fixed": "#000767",
+              "background": "#f9f9f9",
+              "on-secondary": "#ffffff",
+              "inverse-surface": "#2f3131",
+              "secondary-container": "#33a0fd",
+              "primary-fixed": "#e0e0ff",
+              "surface-dim": "#dadada",
+              "error": "#ba1a1a",
+              "on-primary": "#ffffff",
+              "secondary": "#0061a4",
+              "on-error": "#ffffff",
+              "surface-tint": "#4c56af",
+              "surface-container-highest": "#e2e2e2",
+              "tertiary-container": "#670008",
+              "surface-container-low": "#f3f3f3",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#bdc2ff",
+              "tertiary-fixed-dim": "#ffb3ac",
+              "surface-container-lowest": "#ffffff",
+              "primary-container": "#1a237e",
+              "inverse-on-surface": "#f1f1f1",
+              "tertiary": "#400003",
+              "on-surface": "#1a1c1c",
+              "on-error-container": "#93000a",
+              "on-background": "#1a1c1c",
+              "surface-variant": "#e2e2e2",
+              "surface": "#f9f9f9",
+              "on-surface-variant": "#454652",
+              "outline-variant": "#c6c5d4",
+              "on-secondary-fixed-variant": "#00497d",
+              "on-primary-container": "#8690ee",
+              "inverse-primary": "#bdc2ff",
+              "on-secondary-container": "#00355c",
+              "primary": "#000666",
+              "tertiary-fixed": "#ffdad6",
+              "on-tertiary-fixed-variant": "#930010"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-header {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 bg-slate-50/80 backdrop-blur-xl">
+<div class="flex justify-between items-center w-full px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-indigo-900" data-icon="sensors">sensors</span>
+<h1 class="font-['Manrope'] font-extrabold text-indigo-950 tracking-tighter text-lg">Precision Monitoring</h1>
+</div>
+<div class="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-full">
+<span class="material-symbols-outlined text-xs text-indigo-700" data-icon="bluetooth_connected">bluetooth_connected</span>
+<span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700">Fitbit Active</span>
+</div>
+</div>
+<div class="bg-slate-100/50 h-[1px] w-full"></div>
+</header>
+<main class="px-6 pt-8 max-w-2xl mx-auto">
+<!-- Status Indicator -->
+<div class="mb-10 flex items-center justify-between">
+<div>
+<p class="text-on-surface-variant font-medium text-sm mb-1">Current Health State</p>
+<div class="flex items-center gap-2">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</span>
+<h2 class="font-headline font-bold text-2xl tracking-tight text-primary">Status: Monitoring</h2>
+</div>
+</div>
+<div class="h-12 w-12 rounded-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="professional headshot of a person with a neutral expression in high-key studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsXGlhdNngCTgvyD-EcImmaTB386UNjRE9M0iPnk8cKA5bNXCsrPSlzNdEg8_CHxzWiylRSH30DotIuZda7ma4dy32NqfPYLHOxj2p_D3Kwsu_xr6jmlPRA0bNqC7Ypvh3wwGS1id8R0YIj4EFFMRdGtcUnKXC8SC3NwVpb9KHO53r-lyr6kx-vxMWfzMhBBgQsXe-HQNdgiB6fd0uG2c_BRtCBk8u2jITiEUuZD7kM_H1wLsHyxwZVExd3XyqR_cmvd3jXs2ECDY"/>
+</div>
+</div>
+<!-- Bento Grid Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Heart Rate Card - Large Asymmetric -->
+<div class="md:col-span-2 bg-surface-container-lowest rounded-xl p-6 transition-all hover:translate-y-[-2px]">
+<div class="flex justify-between items-start mb-8">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-on-tertiary-container" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-label text-xs font-semibold uppercase tracking-widest text-on-surface-variant">Heart Rate</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline font-extrabold text-6xl tracking-tighter text-primary">72</span>
+<span class="font-headline font-bold text-xl text-on-surface-variant">BPM</span>
+</div>
+</div>
+<div class="bg-tertiary-container/10 px-3 py-1 rounded-lg">
+<span class="text-on-tertiary-container text-xs font-bold">Stable</span>
+</div>
+</div>
+<!-- Simple Trend Chart (SVG) -->
+<div class="w-full h-24 mt-4 overflow-hidden">
+<svg class="w-full h-full stroke-on-tertiary-container fill-none stroke-[3] transition-all" viewbox="0 0 400 100">
+<path d="M0,80 Q20,75 40,85 T80,60 T120,70 T160,40 T200,50 T240,30 T280,45 T320,20 T360,35 T400,25"></path>
+<path class="fill-on-tertiary-container/5 stroke-none" d="M0,80 Q20,75 40,85 T80,60 T120,70 T160,40 T200,50 T240,30 T280,45 T320,20 T360,35 T400,25 V100 H0 Z"></path>
+</svg>
+</div>
+<div class="flex justify-between mt-2 font-label text-[10px] text-on-surface-variant uppercase tracking-widest">
+<span>24h ago</span>
+<span>Current</span>
+</div>
+</div>
+<!-- Blood Oxygen (SpO2) -->
+<div class="bg-surface-container-lowest rounded-xl p-6 transition-all hover:translate-y-[-2px]">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary" data-icon="water_drop" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+<span class="font-label text-xs font-semibold uppercase tracking-widest text-on-surface-variant">SpO2</span>
+</div>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="font-headline font-extrabold text-4xl tracking-tighter text-primary">98</span>
+<span class="font-headline font-bold text-lg text-on-surface-variant">%</span>
+</div>
+<!-- Trend Line -->
+<div class="w-full h-12 overflow-hidden">
+<svg class="w-full h-full stroke-secondary fill-none stroke-[2]" viewbox="0 0 200 50">
+<path d="M0,25 L20,24 L40,26 L60,25 L80,23 L100,24 L120,25 L140,24 L160,22 L180,23 L200,24"></path>
+</svg>
+</div>
+</div>
+<!-- Respiratory Rate -->
+<div class="bg-surface-container-lowest rounded-xl p-6 transition-all hover:translate-y-[-2px]">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-indigo-500" data-icon="air">air</span>
+<span class="font-label text-xs font-semibold uppercase tracking-widest text-on-surface-variant">Respiration</span>
+</div>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="font-headline font-extrabold text-4xl tracking-tighter text-primary">14</span>
+<span class="font-headline font-bold text-lg text-on-surface-variant">RPM</span>
+</div>
+<!-- Trend Line -->
+<div class="w-full h-12 overflow-hidden">
+<svg class="w-full h-full stroke-indigo-400 fill-none stroke-[2]" viewbox="0 0 200 50">
+<path d="M0,35 Q20,15 40,35 T80,35 T120,35 T160,35 T200,35"></path>
+</svg>
+</div>
+</div>
+<!-- Secondary Insight Card -->
+<div class="md:col-span-2 bg-primary-container rounded-xl p-6 relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="text-on-primary-container font-headline font-bold text-lg mb-2">Sleep Recovery Analysis</h3>
+<p class="text-on-primary-fixed-variant text-sm max-w-[70%] leading-relaxed">Your respiratory rate remained consistent throughout the night, suggesting high-quality recovery.</p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" data-icon="bedtime">bedtime</span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-white/90 backdrop-blur-lg shadow-[0_-8px_30px_rgb(0,0,0,0.04)] rounded-t-[2rem]">
+<!-- Home Active -->
+<a class="flex flex-col items-center justify-center bg-indigo-50 text-indigo-700 rounded-2xl px-5 py-2 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Inter'] text-[11px] font-semibold uppercase tracking-widest">Home</span>
+</a>
+<!-- History Inactive -->
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-indigo-600 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] text-[11px] font-semibold uppercase tracking-widest">History</span>
+</a>
+<!-- Settings Inactive -->
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-indigo-600 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[11px] font-semibold uppercase tracking-widest">Settings</span>
+</a>
+</nav>
+<!-- Ghost Border Separation Fallback -->
+<div class="fixed bottom-[108px] left-0 w-full h-[1px] bg-outline-variant opacity-[0.15]"></div>
+</body></html>

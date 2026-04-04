@@ -1,0 +1,31 @@
+# PRD: Biometric Overdose Detection App (MVP)
+
+## 🎯 Objective
+Create a React Native (Expo) mobile app that connects to wearables (Fitbit) to detect potential overdose risks using heart rate, SpO2, and estimated respiratory rate.
+
+## 📱 Core Features
+- **User Authentication**: Firebase Auth (Email/Password + Google).
+- **Wearable Integration**: Fitbit Web API for HR, SpO2, and Activity data.
+- **Biometric Calibration**: 24-hour baseline establishment for HR and SpO2.
+- **Detection Algorithm**: Rule-based logic comparing real-time data vs. baseline (20-40% drops).
+- **Alerting System**: In-app alerts and push notifications (FCM).
+- **Dashboard**: Real-time metrics and 7-day trend visualizations.
+
+## 🎨 UI/UX Strategy
+- **Trust & Clarity**: Use a "Medical-Tech" aesthetic—clean, reliable, and professional.
+- **Color Palette**: Calm blues for stability, with high-contrast amber/red for alerts.
+- **Accessibility**: Large, readable metrics for quick assessment.
+
+## 🛠️ Tech Stack
+- **Frontend**: React Native / Expo
+- **Backend**: Firebase (Firestore, Auth, Messaging)
+- **API**: Fitbit Web API (OAuth 2.0)
+- **State Management**: React Context or Redux Toolkit
+
+## 📊 Data Schema
+- **Users**: `{ uid, email, fitbitToken, baseline: { hr, spo2 } }`
+- **Readings**: `{ userId, timestamp, hr, spo2, resRate }`
+- **Alerts**: `{ userId, timestamp, severity, type, resolved }`
+
+## 🚶 User Flow
+1. Signup -> 2. Fitbit Auth -> 3. 24h Calibration -> 4. Active Monitoring Dashboard.

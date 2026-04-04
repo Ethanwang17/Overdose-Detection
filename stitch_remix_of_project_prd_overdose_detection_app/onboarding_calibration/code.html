@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Precision Monitoring - Calibration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#ff635b",
+              "secondary-fixed-dim": "#9ecaff",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#d1e4ff",
+              "on-tertiary-fixed": "#410003",
+              "surface-container": "#eeeeee",
+              "surface-container-high": "#e8e8e8",
+              "on-secondary-fixed": "#001d36",
+              "on-primary-fixed-variant": "#343d96",
+              "outline": "#767683",
+              "surface-bright": "#f9f9f9",
+              "on-primary-fixed": "#000767",
+              "background": "#f9f9f9",
+              "on-secondary": "#ffffff",
+              "inverse-surface": "#2f3131",
+              "secondary-container": "#33a0fd",
+              "primary-fixed": "#e0e0ff",
+              "surface-dim": "#dadada",
+              "error": "#ba1a1a",
+              "on-primary": "#ffffff",
+              "secondary": "#0061a4",
+              "on-error": "#ffffff",
+              "surface-tint": "#4c56af",
+              "surface-container-highest": "#e2e2e2",
+              "tertiary-container": "#670008",
+              "surface-container-low": "#f3f3f3",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#bdc2ff",
+              "tertiary-fixed-dim": "#ffb3ac",
+              "surface-container-lowest": "#ffffff",
+              "primary-container": "#1a237e",
+              "inverse-on-surface": "#f1f1f1",
+              "tertiary": "#400003",
+              "on-surface": "#1a1c1c",
+              "on-error-container": "#93000a",
+              "on-background": "#1a1c1c",
+              "surface-variant": "#e2e2e2",
+              "surface": "#f9f9f9",
+              "on-surface-variant": "#454652",
+              "outline-variant": "#c6c5d4",
+              "on-secondary-fixed-variant": "#00497d",
+              "on-primary-container": "#8690ee",
+              "inverse-primary": "#bdc2ff",
+              "on-secondary-container": "#00355c",
+              "primary": "#000666",
+              "tertiary-fixed": "#ffdad6",
+              "on-tertiary-fixed-variant": "#930010"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9f9; color: #1a1c1c; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface selection:bg-primary-fixed selection:text-primary">
+<!-- TopAppBar -->
+<header class="bg-slate-50/80 backdrop-blur-xl flex justify-between items-center w-full px-6 py-4 docked full-width top-0 sticky z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-indigo-900" data-icon="sensors">sensors</span>
+<h1 class="font-['Manrope'] font-extrabold text-indigo-950 tracking-tighter">Precision Monitoring</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-indigo-900 hover:opacity-80 transition-opacity" data-icon="bluetooth_connected">bluetooth_connected</span>
+</div>
+</header>
+<div class="bg-slate-100/50 h-[1px] w-full"></div>
+<main class="max-w-screen-xl mx-auto px-6 pt-12 pb-32">
+<!-- Onboarding Narrative Header -->
+<section class="mb-12 max-w-2xl">
+<h2 class="font-headline text-display-lg font-extrabold text-primary tracking-tight leading-tight mb-4 text-4xl md:text-5xl">
+                Establishing Your Baseline
+            </h2>
+<p class="text-on-surface-variant text-lg leading-relaxed font-body">
+                Precision Monitoring requires a 24-hour physiological profile to ensure detection accuracy. This process personalizes thresholds for life-saving overdose detection specific to your unique body chemistry.
+            </p>
+</section>
+<!-- Main Calibration Content - Asymmetric Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left Column: Progress & Status -->
+<div class="lg:col-span-7 space-y-8">
+<!-- Status Card -->
+<div class="bg-surface-container-lowest p-8 rounded-full shadow-[0_12px_32px_rgba(26,28,28,0.04)] transition-all">
+<div class="flex justify-between items-end mb-6">
+<div>
+<span class="text-xs font-label uppercase tracking-widest text-secondary font-bold mb-2 block">Current Status</span>
+<h3 class="font-headline text-2xl font-bold text-on-surface">Establishing Baseline</h3>
+</div>
+<div class="text-right">
+<span class="font-headline text-4xl font-extrabold text-primary tracking-tighter">04<span class="text-xl font-normal text-on-surface-variant">/24h</span></span>
+</div>
+</div>
+<!-- Progress Bar Component -->
+<div class="relative h-4 w-full bg-surface-container-high rounded-full overflow-hidden mb-4">
+<div class="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-secondary-container rounded-full" style="width: 16.6%;"></div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]" data-icon="sync" style="font-variation-settings: 'FILL' 0;">sync</span>
+                        Continuous data synchronization active
+                    </div>
+</div>
+<!-- Instruction Grid (Bento) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-6 rounded-xl space-y-3">
+<div class="h-10 w-10 bg-primary-fixed rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="vital_signs">vital_signs</span>
+</div>
+<h4 class="font-headline font-bold text-on-surface">Dynamic Range</h4>
+<p class="text-on-surface-variant text-sm leading-snug">We monitor resting heart rate and respiratory variability to set a high-confidence safety floor.</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl space-y-3">
+<div class="h-10 w-10 bg-secondary-fixed rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant" data-icon="bolt">bolt</span>
+</div>
+<h4 class="font-headline font-bold text-on-surface">Response Logic</h4>
+<p class="text-on-surface-variant text-sm leading-snug">Baseline data ensures that normal sleep patterns or exercise aren't mistaken for medical emergencies.</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Action & Visual -->
+<div class="lg:col-span-5 space-y-6">
+<!-- Device Connection Card -->
+<div class="bg-surface-container-lowest p-8 rounded-full shadow-[0_12px_32px_rgba(26,28,28,0.04)] flex flex-col items-center text-center">
+<div class="w-full h-48 rounded-2xl overflow-hidden mb-8 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Modern smartwatch on a minimal wooden surface with soft natural lighting and medical diagnostic aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZxM6KlMkZ1bXu97Bq1eDMBm46bXmhvvyiTo4ne9lQeOUPd3mPybeVFBcJzwbbw9W9Cwx6n5qb7DUZDEcEJ3A_Ix6_LWZpz8RyckQDVLpC-28QdX0327n8_sJ1yh29aBu5uzN1yMpjGfe_VfBWHB299bh68LHKCSW8wev3OiQF8-S7RUTxbk5lh2qA-Jwd_1fYFblS-JPd_zIF9gKbR87zjpd0xHT4L-Vrao7ARMJwdnIPwIQlOLdSB3fSlFjf6u8lsHg9YigDdpk"/>
+</div>
+<h3 class="font-headline text-xl font-bold text-on-surface mb-2">Connect Wearable</h3>
+<p class="text-on-surface-variant text-sm mb-8 px-4">
+                        Integration with Fitbit provides the high-fidelity sensor data required for our detection algorithms.
+                    </p>
+<button class="w-full py-4 px-8 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline font-bold text-lg shadow-lg hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-3">
+<span class="material-symbols-outlined" data-icon="watch">watch</span>
+                        Connect Fitbit
+                    </button>
+<p class="mt-4 text-[11px] uppercase tracking-widest text-outline font-bold">Encrypted 256-bit Health Data Link</p>
+</div>
+<!-- Security Note -->
+<div class="bg-tertiary-container/10 p-5 rounded-xl flex gap-4 items-start">
+<span class="material-symbols-outlined text-on-tertiary-container mt-1" data-icon="shield_lock">shield_lock</span>
+<div>
+<h5 class="text-sm font-bold text-on-surface">Privacy Guaranteed</h5>
+<p class="text-xs text-on-surface-variant leading-relaxed">Calibration data is processed on-device and never shared with third parties or insurance providers.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Navigation Suppressed for Onboarding as per Filter rules (Transactional/Onboarding Page) -->
+<!-- However, the task mentions showing progress, if this were a dashboard we'd show the Nav. -->
+<!-- As a focused Onboarding screen, we maintain the suppress strategy for navigation shells. -->
+<!-- Optional Support FAB (Only if absolutely necessary for onboarding help) -->
+<!-- Suppression rule applied: Suppress FAB on transactional/onboarding screens -->
+</body></html>

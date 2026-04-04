@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Precision Monitoring - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed-variant": "#930010",
+              "primary": "#000000",
+              "tertiary-fixed": "#ffdad6",
+              "on-secondary-container": "#e4e7ff",
+              "inverse-primary": "#b1c7f2",
+              "on-primary-container": "#6f84ac",
+              "on-secondary-fixed-variant": "#003ab2",
+              "outline-variant": "#c4c6cf",
+              "surface": "#f7f9fb",
+              "on-surface-variant": "#44474e",
+              "surface-variant": "#e0e3e5",
+              "on-background": "#191c1e",
+              "on-error-container": "#93000a",
+              "on-surface": "#191c1e",
+              "tertiary": "#010000",
+              "inverse-on-surface": "#eff1f3",
+              "primary-container": "#001b3d",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed-dim": "#ffb3ac",
+              "primary-fixed-dim": "#b1c7f2",
+              "on-tertiary": "#ffffff",
+              "surface-container-low": "#f2f4f6",
+              "tertiary-container": "#410003",
+              "surface-container-highest": "#e0e3e5",
+              "surface-tint": "#495f84",
+              "on-error": "#ffffff",
+              "secondary": "#0042c8",
+              "on-primary": "#ffffff",
+              "error": "#ba1a1a",
+              "surface-dim": "#d8dadc",
+              "primary-fixed": "#d6e3ff",
+              "secondary-container": "#0056ff",
+              "inverse-surface": "#2d3133",
+              "on-secondary": "#ffffff",
+              "background": "#f7f9fb",
+              "outline": "#74777f",
+              "surface-bright": "#f7f9fb",
+              "on-primary-fixed": "#001b3d",
+              "on-primary-fixed-variant": "#31476b",
+              "on-secondary-fixed": "#001550",
+              "surface-container-high": "#e6e8ea",
+              "surface-container": "#eceef0",
+              "on-tertiary-fixed": "#410003",
+              "secondary-fixed": "#dce1ff",
+              "error-container": "#ffdad6",
+              "secondary-fixed-dim": "#b6c4ff",
+              "on-tertiary-container": "#f04440"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f7f9fb;
+            color: #191c1e;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body antialiased pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-20 bg-white dark:bg-[#001B3D] border-none">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#001B3D] dark:text-white" data-icon="sensors">sensors</span>
+<h1 class="font-['Manrope'] font-bold text-2xl uppercase tracking-tight text-[#001B3D] dark:text-white">Precision Monitoring</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-[#eceef0] dark:hover:bg-[#001B3D]/80 transition-colors rounded-full active:scale-95 duration-100">
+<span class="material-symbols-outlined text-[#001B3D] dark:text-white" data-icon="bluetooth">bluetooth</span>
+</button>
+</div>
+</header>
+<main class="pt-28 px-6 max-w-4xl mx-auto space-y-12">
+<!-- Profile Section -->
+<section class="flex flex-col md:flex-row items-start md:items-center gap-8 py-8 bg-surface-container-low px-8 rounded-lg">
+<div class="relative group">
+<div class="w-32 h-32 bg-primary flex items-center justify-center rounded-none overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover grayscale" data-alt="stark black and white portrait of a man with serious expression against a minimal grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgLbuhCX8mDL5ijmCHbI1cWRqZ4kNaESrnkOVEWVfhV4U6BV7rnfYH3NxM_G-gnRiprbyFHbPa_Jus1FhCf5IxgwiKg0tKdXKYukYxAnbPgHrppZVmRE5zhnqaduihp1z6eWNStvm1WiyMmowf_ayL-xRyloTL3K5ywDqu57ya0_t-hQHIriV9wJr58UpyJHudERezJz5-gd3e-DDi7SiEvas9aBoUNe8qZGP1d0EaQIbn-HU8xq4YDBBtEsZSvMEfdVGVn5fJx1o"/>
+</div>
+<div class="absolute bottom-0 right-0 p-1 bg-secondary text-white">
+<span class="material-symbols-outlined text-xs" data-icon="edit">edit</span>
+</div>
+</div>
+<div class="space-y-1">
+<h2 class="font-headline font-extrabold text-4xl text-primary">Marcus Vance</h2>
+<p class="font-label text-on-surface-variant uppercase tracking-widest text-xs">Patient ID: 882-001-ALPHA</p>
+<div class="pt-4">
+<button class="bg-primary text-on-primary px-6 py-2 font-bold uppercase text-xs tracking-tighter hover:bg-primary-container transition-all active:scale-95">Edit Metadata</button>
+</div>
+</div>
+</section>
+<!-- Wearables & Hardware Grid -->
+<section class="space-y-6">
+<h3 class="font-headline font-black text-2xl uppercase tracking-tighter text-primary border-l-8 border-secondary pl-4">Hardware Ecosystem</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-surface-container-highest">
+<!-- Wearable Card 1 -->
+<div class="bg-surface-container-lowest p-8 flex flex-col justify-between min-h-[220px]">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="font-label text-[10px] text-secondary font-bold uppercase tracking-widest">Active Link</span>
+<h4 class="font-headline font-bold text-xl uppercase">Precision-V Core</h4>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="watch">watch</span>
+</div>
+<div class="flex items-end justify-between mt-8">
+<div>
+<p class="font-label text-[10px] uppercase text-on-surface-variant">Battery Level</p>
+<p class="font-headline font-extrabold text-3xl">94%</p>
+</div>
+<div class="h-1 w-24 bg-surface-container-high relative">
+<div class="absolute inset-0 bg-secondary w-[94%]"></div>
+</div>
+</div>
+</div>
+<!-- Wearable Card 2 -->
+<div class="bg-surface-container-lowest p-8 flex flex-col justify-between min-h-[220px]">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="font-label text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Standby</span>
+<h4 class="font-headline font-bold text-xl uppercase">Biometric Strap II</h4>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="monitor_heart">monitor_heart</span>
+</div>
+<div class="flex items-end justify-between mt-8">
+<button class="text-secondary font-bold text-xs uppercase underline tracking-widest">Force Sync</button>
+<p class="font-label text-[10px] uppercase text-on-surface-variant">Last update: 2m ago</p>
+</div>
+</div>
+</div>
+</section>
+<!-- System Settings -->
+<section class="space-y-6">
+<h3 class="font-headline font-black text-2xl uppercase tracking-tighter text-primary border-l-8 border-primary-container pl-4">System Parameters</h3>
+<div class="space-y-4">
+<!-- Toggle Item 1 -->
+<div class="flex items-center justify-between p-6 bg-surface-container">
+<div>
+<p class="font-headline font-bold text-lg uppercase tracking-tight">Cloud Telemetry</p>
+<p class="text-xs text-on-surface-variant max-w-sm">Continuous stream of biometric data to centralized medical archive.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-8 bg-surface-container-highest peer-focus:outline-none rounded-none peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:border-none after:h-6 after:w-6 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<!-- Toggle Item 2 -->
+<div class="flex items-center justify-between p-6 bg-surface-container">
+<div>
+<p class="font-headline font-bold text-lg uppercase tracking-tight">Haptic Thresholds</p>
+<p class="text-xs text-on-surface-variant max-w-sm">Enable physical vibration feedback for critical heart rate variance.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-8 bg-surface-container-highest peer-focus:outline-none rounded-none peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:border-none after:h-6 after:w-6 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<!-- Select Item -->
+<div class="flex items-center justify-between p-6 bg-surface-container">
+<div>
+<p class="font-headline font-bold text-lg uppercase tracking-tight">Reporting Interval</p>
+<p class="text-xs text-on-surface-variant">Frequency of detailed diagnostic generation.</p>
+</div>
+<select class="bg-surface-container-highest border-none font-bold uppercase text-xs p-3 focus:ring-2 focus:ring-secondary">
+<option>Every 15 Minutes</option>
+<option selected="">Every 1 Hour</option>
+<option>Every 6 Hours</option>
+<option>Daily Summary</option>
+</select>
+</div>
+<!-- Danger Action -->
+<div class="mt-12 pt-8">
+<button class="w-full flex items-center justify-between p-6 bg-tertiary-fixed text-on-tertiary-fixed-variant group transition-all">
+<span class="font-headline font-black text-xl uppercase italic tracking-tighter">Decommission All Hardware</span>
+<span class="material-symbols-outlined group-hover:translate-x-2 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-2 text-center">Irreversible System Reset Protocol</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 h-24 pb-safe bg-white dark:bg-[#001B3D] border-none">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-[#191c1e] dark:text-slate-400 px-6 py-2 hover:bg-[#eceef0] dark:hover:bg-white/10 active:opacity-80 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home_health">home_health</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-widest mt-1">Home</span>
+</a>
+<!-- History -->
+<a class="flex flex-col items-center justify-center text-[#191c1e] dark:text-slate-400 px-6 py-2 hover:bg-[#eceef0] dark:hover:bg-white/10 active:opacity-80 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-widest mt-1">History</span>
+</a>
+<!-- Settings (Active) -->
+<a class="flex flex-col items-center justify-center bg-[#0042c8] text-white rounded-[4px] px-6 py-2 active:opacity-80 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-['Inter'] font-medium text-[10px] uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

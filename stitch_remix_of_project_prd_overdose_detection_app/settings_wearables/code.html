@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Precision Monitoring - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#ff635b",
+              "secondary-fixed-dim": "#9ecaff",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#d1e4ff",
+              "on-tertiary-fixed": "#410003",
+              "surface-container": "#eeeeee",
+              "surface-container-high": "#e8e8e8",
+              "on-secondary-fixed": "#001d36",
+              "on-primary-fixed-variant": "#343d96",
+              "outline": "#767683",
+              "surface-bright": "#f9f9f9",
+              "on-primary-fixed": "#000767",
+              "background": "#f9f9f9",
+              "on-secondary": "#ffffff",
+              "inverse-surface": "#2f3131",
+              "secondary-container": "#33a0fd",
+              "primary-fixed": "#e0e0ff",
+              "surface-dim": "#dadada",
+              "error": "#ba1a1a",
+              "on-primary": "#ffffff",
+              "secondary": "#0061a4",
+              "on-error": "#ffffff",
+              "surface-tint": "#4c56af",
+              "surface-container-highest": "#e2e2e2",
+              "tertiary-container": "#670008",
+              "surface-container-low": "#f3f3f3",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#bdc2ff",
+              "tertiary-fixed-dim": "#ffb3ac",
+              "surface-container-lowest": "#ffffff",
+              "primary-container": "#1a237e",
+              "inverse-on-surface": "#f1f1f1",
+              "tertiary": "#400003",
+              "on-surface": "#1a1c1c",
+              "on-error-container": "#93000a",
+              "on-background": "#1a1c1c",
+              "surface-variant": "#e2e2e2",
+              "surface": "#f9f9f9",
+              "on-surface-variant": "#454652",
+              "outline-variant": "#c6c5d4",
+              "on-secondary-fixed-variant": "#00497d",
+              "on-primary-container": "#8690ee",
+              "inverse-primary": "#bdc2ff",
+              "on-secondary-container": "#00355c",
+              "primary": "#000666",
+              "tertiary-fixed": "#ffdad6",
+              "on-tertiary-fixed-variant": "#930010"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+      }
+      .tap-highlight-transparent { -webkit-tap-highlight-color: transparent; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body min-h-screen pb-32">
+<!-- TopAppBar -->
+<nav class="docked full-width top-0 sticky z-50 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-xl">
+<div class="flex justify-between items-center w-full px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-indigo-900 dark:text-indigo-100" data-icon="sensors">sensors</span>
+<span class="font-['Manrope'] font-extrabold text-indigo-950 dark:text-white tracking-tighter">Precision Monitoring</span>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-indigo-900 dark:text-indigo-100 transition-opacity hover:opacity-80 active:scale-95 duration-100" data-icon="bluetooth_connected">bluetooth_connected</span>
+</div>
+</div>
+<div class="bg-slate-100/50 dark:bg-slate-800/50 h-[1px] w-full"></div>
+</nav>
+<main class="max-w-2xl mx-auto px-6 pt-8">
+<!-- Header Section -->
+<header class="mb-10">
+<h1 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight mb-2">Settings</h1>
+<p class="text-on-surface-variant body-md">Configure your health tracking ecosystem and personal preferences.</p>
+</header>
+<!-- User Profile Section -->
+<section class="mb-10">
+<h2 class="font-headline text-lg font-bold text-on-surface mb-4">User Profile</h2>
+<div class="bg-surface-container-lowest rounded-xl p-6 flex items-center gap-5 transition-all">
+<div class="relative">
+<img alt="User Profile" class="w-16 h-16 rounded-full object-cover" data-alt="Professional studio headshot of a middle-aged man with a friendly expression, soft lighting, neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBghjStOPS8nFGPC_idHuSb0RLT2KTRjIUMdgMge4WnuMuksiVZBlYY4BCXLC8Pu4X-WOeizpae1ekJE_tAbFQhGXS7SzYnBxI1cL5SdOAGHdsfszZQS-FqAbeTJecsTWYHi2AvbUoM2WrElhwMPHmrBmvw2no4_bUIeFpH3FdRRa45uQQiL73wfQrjSYBU8Z2sQVbN39UZq1_4JkA6wXH1_7Jk4TOc8E3BNcSkXgVnc0l6w2iXEYpEjsBGCZYCCoU1fHCvvLgUr0I"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-secondary-container border-2 border-white rounded-full"></div>
+</div>
+<div class="flex-grow">
+<p class="font-headline font-bold text-lg text-on-surface">Dr. Adrian Sterling</p>
+<p class="text-on-surface-variant text-sm">adrian.sterling@medical.io</p>
+</div>
+<button class="text-secondary font-semibold text-sm hover:opacity-80">Edit</button>
+</div>
+</section>
+<!-- Wearable Integration Section -->
+<section class="mb-10">
+<h2 class="font-headline text-lg font-bold text-on-surface mb-4">Wearable Integration</h2>
+<div class="bg-surface-container-lowest rounded-xl p-6">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-low rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="watch">watch</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Manage Fitbit</p>
+<p class="text-xs font-medium text-on-tertiary-container uppercase tracking-wider">Connected • Last Sync 2m ago</p>
+</div>
+</div>
+<button class="bg-surface-container-low text-on-surface-variant px-4 py-2 rounded-full text-sm font-semibold hover:bg-surface-container-high transition-colors">
+                        Disconnect
+                    </button>
+</div>
+<div class="space-y-4 pt-4 border-t border-outline-variant/10">
+<div class="flex items-center justify-between">
+<span class="text-on-surface font-medium">Auto-sync Data</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface font-medium">Background Monitoring</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Notifications Section -->
+<section class="mb-10">
+<h2 class="font-headline text-lg font-bold text-on-surface mb-4">Notifications</h2>
+<div class="bg-surface-container-lowest rounded-xl divide-y divide-outline-variant/10">
+<div class="p-6 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications_active">notifications_active</span>
+<div>
+<p class="font-medium text-on-surface">Critical Health Alerts</p>
+<p class="text-xs text-on-surface-variant">Immediate alerts for heart rate anomalies</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="p-6 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="history">history</span>
+<div>
+<p class="font-medium text-on-surface">Weekly Summary</p>
+<p class="text-xs text-on-surface-variant">Performance insights delivered every Monday</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<div class="p-6 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="update">update</span>
+<div>
+<p class="font-medium text-on-surface">Software Updates</p>
+<p class="text-xs text-on-surface-variant">Notifications for firmware and app improvements</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- System Section -->
+<section class="mb-10">
+<h2 class="font-headline text-lg font-bold text-on-surface mb-4">System</h2>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden">
+<button class="w-full p-6 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="security">security</span>
+<p class="font-medium text-on-surface">Privacy &amp; Security</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="w-full p-6 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors border-t border-outline-variant/10">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="help">help</span>
+<p class="font-medium text-on-surface">Support Center</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="w-full p-6 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors border-t border-outline-variant/10">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-error" data-icon="logout">logout</span>
+<p class="font-medium text-error">Sign Out</p>
+</div>
+</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-8 pt-4 bg-white/90 dark:bg-slate-950/90 backdrop-blur-lg rounded-t-[2rem] shadow-[0_-8px_30px_rgb(0,0,0,0.04)] border-t border-slate-100/10">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-indigo-600 dark:hover:text-indigo-300 tap-highlight-transparent active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Inter'] text-[11px] font-semibold uppercase tracking-widest mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-indigo-600 dark:hover:text-indigo-300 tap-highlight-transparent active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Inter'] text-[11px] font-semibold uppercase tracking-widest mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-200 rounded-2xl px-5 py-2 transition-all tap-highlight-transparent active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-['Inter'] text-[11px] font-semibold uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+</body></html>
