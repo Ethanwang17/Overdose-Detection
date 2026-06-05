@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../theme/colors';
 import { fonts } from '../../theme/fonts';
+import ExportScreen from './ExportScreen';
 
 type EventSeverity = 'critical' | 'warning' | 'stable' | 'info';
 
@@ -167,6 +169,7 @@ const evtStyles = StyleSheet.create({
 
 export default function HistoryScreen() {
   const [filter, setFilter] = useState<'all' | 'alerts'>('all');
+  const [exportVisible, setExportVisible] = useState(false);
 
   const visibleEvents =
     filter === 'alerts'
@@ -255,7 +258,11 @@ export default function HistoryScreen() {
               <Text style={styles.exportSubtitle}>Generate clinical PDF report</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.exportButton} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.exportButton}
+            activeOpacity={0.8}
+            onPress={() => setExportVisible(true)}
+          >
             <Text style={styles.exportButtonText}>Export</Text>
             <Ionicons name="download-outline" size={14} color={colors.onPrimary} />
           </TouchableOpacity>
@@ -263,6 +270,15 @@ export default function HistoryScreen() {
 
         <View style={{ height: 16 }} />
       </ScrollView>
+
+      <Modal
+        visible={exportVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setExportVisible(false)}
+      >
+        <ExportScreen onClose={() => setExportVisible(false)} />
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -301,6 +317,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 120,
   },
   filterRow: {
     flexDirection: 'row',
