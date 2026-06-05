@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 120,
   },
   statusCard: {
     flexDirection: 'row',
