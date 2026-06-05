@@ -7,6 +7,10 @@ import {
   Switch,
   StyleSheet,
   SafeAreaView,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/authStore';
@@ -135,6 +139,28 @@ export default function SettingsScreen() {
   const [weeklySummary, setWeeklySummary] = useState(true);
   const [softwareUpdates, setSoftwareUpdates] = useState(false);
 
+  const [profile, setProfile] = useState({
+    name: 'Dr. Adrian Sterling',
+    email: 'adrian.sterling@medical.io',
+    patientId: 'PM-2024-0042',
+  });
+  const [editVisible, setEditVisible] = useState(false);
+  const [draft, setDraft] = useState(profile);
+
+  const openEdit = () => {
+    setDraft(profile);
+    setEditVisible(true);
+  };
+
+  const saveEdit = () => {
+    setProfile({
+      name: draft.name.trim() || profile.name,
+      email: draft.email.trim() || profile.email,
+      patientId: draft.patientId.trim() || profile.patientId,
+    });
+    setEditVisible(false);
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       {/* Header */}
@@ -154,11 +180,11 @@ export default function SettingsScreen() {
             <Ionicons name="person" size={28} color={colors.primary} />
           </View>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Dr. Adrian Sterling</Text>
-            <Text style={styles.profileEmail}>adrian.sterling@medical.io</Text>
-            <Text style={styles.profileId}>Patient ID: PM-2024-0042</Text>
+            <Text style={styles.profileName}>{profile.name}</Text>
+            <Text style={styles.profileEmail}>{profile.email}</Text>
+            <Text style={styles.profileId}>Patient ID: {profile.patientId}</Text>
           </View>
-          <TouchableOpacity style={styles.editButton} activeOpacity={0.8}>
+          <TouchableOpacity style={styles.editButton} activeOpacity={0.8} onPress={openEdit}>
             <Text style={styles.editButtonText}>Edit</Text>
           </TouchableOpacity>
         </View>
@@ -241,9 +267,147 @@ export default function SettingsScreen() {
 
         <View style={{ height: 24 }} />
       </ScrollView>
+
+      {/* Edit profile modal */}
+      <Modal
+        visible={editVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setEditVisible(false)}
+      >
+        <KeyboardAvoidingView
+          style={modalStyles.overlay}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <View style={modalStyles.sheet}>
+            <View style={modalStyles.handle} />
+            <Text style={modalStyles.title}>Edit Profile</Text>
+
+            <Text style={modalStyles.fieldLabel}>Full Name</Text>
+            <TextInput
+              style={modalStyles.input}
+              value={draft.name}
+              onChangeText={(name) => setDraft((d) => ({ ...d, name }))}
+              placeholder="Full name"
+              placeholderTextColor={colors.outlineVariant}
+            />
+
+            <Text style={modalStyles.fieldLabel}>Email</Text>
+            <TextInput
+              style={modalStyles.input}
+              value={draft.email}
+              onChangeText={(email) => setDraft((d) => ({ ...d, email }))}
+              placeholder="Email"
+              placeholderTextColor={colors.outlineVariant}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <Text style={modalStyles.fieldLabel}>Patient ID</Text>
+            <TextInput
+              style={modalStyles.input}
+              value={draft.patientId}
+              onChangeText={(patientId) => setDraft((d) => ({ ...d, patientId }))}
+              placeholder="Patient ID"
+              placeholderTextColor={colors.outlineVariant}
+              autoCapitalize="characters"
+            />
+
+            <View style={modalStyles.actions}>
+              <TouchableOpacity
+                style={[modalStyles.actionButton, modalStyles.cancelButton]}
+                onPress={() => setEditVisible(false)}
+                activeOpacity={0.8}
+              >
+                <Text style={modalStyles.cancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[modalStyles.actionButton, modalStyles.saveButton]}
+                onPress={saveEdit}
+                activeOpacity={0.8}
+              >
+                <Text style={modalStyles.saveText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 }
+
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  sheet: {
+    backgroundColor: colors.surfaceContainerLowest,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 32,
+  },
+  handle: {
+    alignSelf: 'center',
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.outlineVariant,
+    marginBottom: 16,
+  },
+  title: {
+    fontFamily: fonts.manrope.extraBold,
+    fontSize: 20,
+    color: colors.onSurface,
+    marginBottom: 16,
+  },
+  fieldLabel: {
+    fontFamily: fonts.inter.medium,
+    fontSize: 12,
+    color: colors.onSurfaceVariant,
+    marginBottom: 6,
+    marginTop: 12,
+  },
+  input: {
+    fontFamily: fonts.inter.regular,
+    fontSize: 15,
+    color: colors.onSurface,
+    backgroundColor: colors.surfaceContainerLow,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 24,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: colors.surfaceContainerLow,
+  },
+  cancelText: {
+    fontFamily: fonts.inter.semiBold,
+    fontSize: 15,
+    color: colors.onSurface,
+  },
+  saveButton: {
+    backgroundColor: colors.primary,
+  },
+  saveText: {
+    fontFamily: fonts.inter.semiBold,
+    fontSize: 15,
+    color: colors.onPrimary,
+  },
+});
 
 const styles = StyleSheet.create({
   root: {
@@ -276,6 +440,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 120,
   },
   profileCard: {
     flexDirection: 'row',
