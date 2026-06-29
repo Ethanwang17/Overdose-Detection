@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "Haven Monitor",
+    "slug": "haven-monitor",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.havenmonitor.app",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "Haven Monitor reads your heart rate, blood oxygen, and respiratory rate to detect signs of overdose.",
+        "NSLocationWhenInUseUsageDescription": "Haven shares your location with emergency contacts when an alert is triggered.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Haven monitors your location in the background to support emergency response."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.havenmonitor.app"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#15151A"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

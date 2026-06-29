@@ -1,0 +1,38 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@theme": [
+        "./theme/index.ts"
+      ],
+      "@types/*": [
+        "./types/*"
+      ],
+      "@features/*": [
+        "./features/*"
+      ],
+      "@shared/*": [
+        "./shared/*"
+      ],
+      "@services/*": [
+        "./services/*"
+      ],
+      "@repositories/*": [
+        "./repositories/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
+}
