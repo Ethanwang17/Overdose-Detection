@@ -6,11 +6,18 @@ import { Colors } from '../../theme/colors';
 import StatusScreen from '../../features/dashboard/screens/StatusScreen';
 import AlertsScreen from '../../features/alerts/screens/AlertsScreen';
 import SettingsScreen from '../../features/settings/screens/SettingsScreen';
+import OfficerShell from '../../features/monitoring/components/OfficerShell';
+import { useAuthStore } from '../../features/authentication/store/authStore';
 
 type Tab = 'status' | 'alerts' | 'settings';
 
 export default function AppShell() {
+  const { profile } = useAuthStore();
   const [activeTab, setActiveTab] = useState<Tab>('status');
+
+  if (profile?.role === 'parole_officer') {
+    return <OfficerShell />;
+  }
 
   return (
     <View style={styles.container}>

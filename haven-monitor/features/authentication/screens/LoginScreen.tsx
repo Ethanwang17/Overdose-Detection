@@ -7,22 +7,32 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Colors, Spacing, FontSize, FontWeight, Radius } from '../../../theme/colors';
+import { Colors, Spacing, FontSize, FontWeight } from '../../../theme/colors';
+import { AuthService } from '../../../services/AuthService';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
+    if (!email.trim() || !password) {
+      Alert.alert('Missing fields', 'Please enter your email and password.');
+      return;
+    }
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await AuthService.signIn(email.trim(), password);
       router.replace('/(app)');
-    }, 1000);
+    } catch (err: any) {
+      Alert.alert('Sign in failed', err.message ?? 'Please check your credentials and try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -40,13 +50,11 @@ export default function LoginScreen() {
 
           <View style={styles.spacerLg} />
 
-          {/* Heading */}
           <Text style={styles.heading}>Sign in</Text>
           <Text style={styles.subtitle}>Continue monitoring your health.</Text>
 
           <View style={styles.spacerMd} />
 
-          {/* Inputs */}
           <TextInput
             style={styles.input}
             value={email}
@@ -70,7 +78,6 @@ export default function LoginScreen() {
 
           <View style={styles.spacerMd} />
 
-          {/* CTA */}
           <TouchableOpacity
             style={[styles.ctaButton, isLoading && styles.ctaButtonLoading]}
             onPress={handleSignIn}
@@ -82,16 +89,11 @@ export default function LoginScreen() {
 
           <View style={styles.spacerSm} />
 
-          {/* Forgot password */}
-          <TouchableOpacity
-            onPress={() => router.push('/(auth)/forgot-password')}
-            activeOpacity={0.6}
-          >
+          <TouchableOpacity onPress={() => router.push('/(auth)/forgot-password')} activeOpacity={0.6}>
             <Text style={styles.forgotText}>Forgot password?</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Register link at bottom */}
         <View style={styles.registerRow}>
           <Text style={styles.registerText}>Don't have an account? </Text>
           <TouchableOpacity onPress={() => router.push('/(auth)/register')} activeOpacity={0.7}>
@@ -104,63 +106,17 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: Colors.white,
-  },
-  keyboardView: {
-    flex: 1,
-    paddingHorizontal: Spacing.screen,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-
-  /* Brand */
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  greenDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: Colors.green,
-  },
-  brandName: {
-    fontSize: FontSize.heading1,
-    fontWeight: FontWeight.bold,
-    color: Colors.ink,
-    letterSpacing: -0.6,
-  },
-
-  /* Spacers */
-  spacerLg: {
-    height: 40,
-  },
-  spacerMd: {
-    height: 32,
-  },
-  spacerSm: {
-    height: 16,
-  },
-
-  /* Heading */
-  heading: {
-    fontSize: 28,
-    fontWeight: FontWeight.bold,
-    color: Colors.ink,
-    letterSpacing: -0.4,
-  },
-  subtitle: {
-    fontSize: FontSize.lg,
-    color: Colors.textSecondary,
-    marginTop: 8,
-  },
-
-  /* Inputs */
+  safeArea: { flex: 1, backgroundColor: Colors.white },
+  keyboardView: { flex: 1, paddingHorizontal: Spacing.screen },
+  container: { flex: 1, justifyContent: 'center' },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  greenDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.green },
+  brandName: { fontSize: FontSize.heading1, fontWeight: FontWeight.bold, color: Colors.ink, letterSpacing: -0.6 },
+  spacerLg: { height: 40 },
+  spacerMd: { height: 32 },
+  spacerSm: { height: 16 },
+  heading: { fontSize: 28, fontWeight: FontWeight.bold, color: Colors.ink, letterSpacing: -0.4 },
+  subtitle: { fontSize: FontSize.lg, color: Colors.textSecondary, marginTop: 8 },
   input: {
     height: 56,
     borderRadius: 16,
@@ -169,48 +125,12 @@ const styles = StyleSheet.create({
     fontSize: FontSize.xl,
     color: Colors.ink,
   },
-  inputGap: {
-    height: 10,
-  },
-
-  /* CTA */
-  ctaButton: {
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: Colors.ink,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ctaButtonLoading: {
-    opacity: 0.7,
-  },
-  ctaText: {
-    fontSize: FontSize.xl,
-    fontWeight: FontWeight.semibold,
-    color: Colors.white,
-  },
-
-  /* Forgot */
-  forgotText: {
-    fontSize: FontSize.lg,
-    color: Colors.textTertiary,
-    textAlign: 'center',
-  },
-
-  /* Register row */
-  registerRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: Spacing.huge,
-  },
-  registerText: {
-    fontSize: FontSize.md,
-    color: Colors.textSecondary,
-  },
-  registerLink: {
-    fontSize: FontSize.md,
-    fontWeight: FontWeight.semibold,
-    color: Colors.ink,
-  },
+  inputGap: { height: 10 },
+  ctaButton: { height: 56, borderRadius: 16, backgroundColor: Colors.ink, alignItems: 'center', justifyContent: 'center' },
+  ctaButtonLoading: { opacity: 0.7 },
+  ctaText: { fontSize: FontSize.xl, fontWeight: FontWeight.semibold, color: Colors.white },
+  forgotText: { fontSize: FontSize.lg, color: Colors.textTertiary, textAlign: 'center' },
+  registerRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingBottom: Spacing.huge },
+  registerText: { fontSize: FontSize.md, color: Colors.textSecondary },
+  registerLink: { fontSize: FontSize.md, fontWeight: FontWeight.semibold, color: Colors.ink },
 });

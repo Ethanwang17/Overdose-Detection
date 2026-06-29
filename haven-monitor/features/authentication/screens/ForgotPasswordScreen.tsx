@@ -11,21 +11,26 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors, Spacing, FontSize, FontWeight, Radius } from '../../../theme/colors';
+import { Alert } from 'react-native';
+import { AuthService } from '../../../services/AuthService';
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleSendReset = () => {
+  const handleSendReset = async () => {
+    if (!email.trim()) return;
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await AuthService.resetPassword(email.trim());
       setSuccessMessage('Check your inbox');
-      setTimeout(() => {
-        router.back();
-      }, 2000);
-    }, 1000);
+      setTimeout(() => router.back(), 2000);
+    } catch (err: any) {
+      Alert.alert('Error', err.message ?? 'Failed to send reset email.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

@@ -10,6 +10,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { Colors, Spacing, FontSize, FontWeight, Radius } from '../../../theme';
+import { AuthService } from '../../../services/AuthService';
+import { useAuthStore } from '../../authentication/store/authStore';
 
 // ── Helper Components ────────────────────────────────────────────────────────
 
@@ -76,8 +78,12 @@ const SettingCard: React.FC<SettingCardProps> = ({ children }) => (
 export default function SettingsScreen() {
   const router = useRouter();
 
-  const handleSignOut = () => {
-    router.replace('/onboarding');
+  const { clear } = useAuthStore();
+
+  const handleSignOut = async () => {
+    await AuthService.signOut();
+    clear();
+    router.replace('/(auth)/login');
   };
 
   return (
