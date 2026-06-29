@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, Spacing, FontSize, FontWeight } from '../../../theme';
 import AlertItem from '../components/AlertItem';
 import { MOCK_ALERTS } from '../../../constants';
@@ -9,7 +10,7 @@ const AlertsScreen: React.FC = () => {
   const criticalCount = MOCK_ALERTS.filter(a => a.severity === 'critical').length;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
@@ -18,7 +19,7 @@ const AlertsScreen: React.FC = () => {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Alerts</Text>
-          <Text style={styles.subtitle}>Elevated &amp; critical events · past 30 days</Text>
+          <Text style={styles.subtitle}>Elevated & critical events · past 30 days</Text>
         </View>
 
         {/* Badge row */}
@@ -33,7 +34,7 @@ const AlertsScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Alert list */}
+        {/* Alert list — individual bubbles */}
         <View style={styles.alertList}>
           {MOCK_ALERTS.map(alert => (
             <AlertItem
@@ -62,17 +63,18 @@ const AlertsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: '#EEF0F5',
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 14,
     paddingBottom: 150,
   },
   header: {
     paddingTop: 6,
+    paddingHorizontal: 10,
   },
   title: {
     fontSize: FontSize.heading1,
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginTop: 18,
+    paddingHorizontal: 10,
   },
   badgeElevated: {
     flexDirection: 'row',
@@ -124,7 +127,7 @@ const styles = StyleSheet.create({
     color: Colors.redDark,
   },
   alertList: {
-    marginTop: 16,
+    marginTop: 12,
   },
   footer: {
     paddingVertical: 26,

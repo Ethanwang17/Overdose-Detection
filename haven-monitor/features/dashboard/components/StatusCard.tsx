@@ -94,13 +94,13 @@ const styles = StyleSheet.create({
   },
   sublabel: {
     fontSize: 16,
-    color: '#6A6A70',
+    color: '#3A3A3F',
     lineHeight: 22,
     marginTop: 8,
   },
   updatedText: {
     fontSize: 13,
-    color: '#A8A8AE',
+    color: '#6E6E73',
     marginTop: 16,
   },
 });

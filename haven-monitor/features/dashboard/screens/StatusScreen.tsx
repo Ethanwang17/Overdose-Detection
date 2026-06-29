@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useBiometricStore } from '../../../features/biometrics/store/biometricStore';
 import StatusCard from '../components/StatusCard';
@@ -55,30 +54,26 @@ export default function StatusScreen() {
   const getHrNote = () => {
     if (status === 'elevated') return 'Above normal';
     if (status === 'critical') return 'Critically low';
-    return 'Normal range';
+    return 'Normal Range';
   };
   const getSpo2Note = () => {
     if (status === 'critical') return 'Critically low';
     if (status === 'elevated') return 'Slightly low';
-    return 'Normal range';
+    return 'Normal Range';
   };
   const getRrNote = () => {
     if (status === 'critical') return 'Critically low';
     if (status === 'elevated') return 'Above normal';
-    return 'Normal range';
+    return 'Normal Range';
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <View style={styles.top}>
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>Good morning</Text>
+            <Text style={styles.greeting}>Hello</Text>
             <Text style={styles.name}>Alex Morgan</Text>
           </View>
           <TouchableOpacity
@@ -102,8 +97,10 @@ export default function StatusScreen() {
             textColor={vitalStatus.textColor}
           />
         </View>
+      </View>
 
-        {/* Vital Metrics */}
+      {/* Vital Metrics — fill remaining space */}
+      <View style={styles.vitalsContainer}>
         <VitalMetric
           label="Heart Rate"
           value={reading?.heartRate?.toString() ?? '--'}
@@ -125,7 +122,7 @@ export default function StatusScreen() {
           note={getRrNote()}
           color={getRrColor()}
         />
-      </ScrollView>
+      </View>
 
       {/* Emergency Overlay */}
       <EmergencyOverlay
@@ -172,20 +169,17 @@ export default function StatusScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: '#EEF0F5',
   },
-  scroll: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 24,
-    paddingBottom: 150,
-    paddingTop: 6,
+  top: {
+    paddingHorizontal: 14,
+    paddingTop: 4,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 10,
   },
   greeting: {
     fontSize: FontSize.md,
@@ -203,7 +197,7 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     paddingHorizontal: 15,
     borderRadius: 18,
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
   },
   demoButtonText: {
     fontSize: FontSize.sm,
@@ -211,6 +205,13 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
   },
   cardWrapper: {
-    marginTop: 22,
+    marginTop: 14,
+  },
+  vitalsContainer: {
+    flex: 1,
+    paddingHorizontal: 14,
+    paddingTop: 12,
+    paddingBottom: 108,
+    gap: 10,
   },
 });

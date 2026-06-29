@@ -2,6 +2,7 @@
   "expo": {
     "name": "Haven Monitor",
     "slug": "haven-monitor",
+    "scheme": "haven-monitor",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

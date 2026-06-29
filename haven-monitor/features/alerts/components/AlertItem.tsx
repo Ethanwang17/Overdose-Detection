@@ -12,6 +12,11 @@ interface AlertItemProps {
   resolution: string;
 }
 
+const SEVERITY_BUBBLE: Record<string, { bg: string }> = {
+  elevated: { bg: '#FFFBEE' },
+  critical:  { bg: '#FFF4F3' },
+};
+
 const AlertItem: React.FC<AlertItemProps> = ({
   id,
   severity,
@@ -22,8 +27,9 @@ const AlertItem: React.FC<AlertItemProps> = ({
   when,
   resolution,
 }) => {
+  const bubble = SEVERITY_BUBBLE[severity] ?? SEVERITY_BUBBLE.elevated;
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, { backgroundColor: bubble.bg }]}>
       <View style={[styles.dot, { backgroundColor: dotColor }]} />
       <View style={styles.content}>
         <View style={styles.topRow}>
@@ -45,10 +51,10 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: 14,
-    paddingVertical: 20,
-    paddingHorizontal: 2,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 0, 0, 0.06)',
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    marginVertical: 5,
+    borderRadius: 20,
   },
   dot: {
     width: 9,
@@ -72,7 +78,7 @@ const styles = StyleSheet.create({
   },
   when: {
     fontSize: 13,
-    color: '#A8A8AE',
+    color: '#6E6E73',
   },
   detail: {
     fontSize: 15,

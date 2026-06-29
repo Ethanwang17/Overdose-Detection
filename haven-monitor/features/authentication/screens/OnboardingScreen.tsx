@@ -5,9 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  SafeAreaView,
   Dimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors, Spacing, FontSize, FontWeight, Radius } from '../../../theme/colors';
 import { ONBOARDING_STEPS } from '../../../constants';
@@ -51,7 +51,7 @@ export default function OnboardingScreen() {
   const step = ONBOARDING_STEPS[currentStep];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       {/* Progress dots */}
       <View style={styles.dotsRow}>
         {ONBOARDING_STEPS.map((_, idx) => {

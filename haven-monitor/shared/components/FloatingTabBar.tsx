@@ -11,7 +11,6 @@ interface FloatingTabBarProps {
   onTabPress: (tab: TabKey) => void;
 }
 
-// Waveform / heartbeat icon
 function StatusIcon({ color }: { color: string }) {
   return (
     <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
@@ -27,7 +26,6 @@ function StatusIcon({ color }: { color: string }) {
   );
 }
 
-// Three-line list / alerts icon
 function AlertsIcon({ color }: { color: string }) {
   return (
     <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
@@ -41,7 +39,6 @@ function AlertsIcon({ color }: { color: string }) {
   );
 }
 
-// Two-line sliders / settings icon
 function SettingsIcon({ color }: { color: string }) {
   return (
     <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
@@ -61,12 +58,9 @@ const TABS: Array<{ key: TabKey; label: string }> = [
 
 function TabIcon({ tabKey, color }: { tabKey: TabKey; color: string }) {
   switch (tabKey) {
-    case 'status':
-      return <StatusIcon color={color} />;
-    case 'alerts':
-      return <AlertsIcon color={color} />;
-    case 'settings':
-      return <SettingsIcon color={color} />;
+    case 'status':   return <StatusIcon color={color} />;
+    case 'alerts':   return <AlertsIcon color={color} />;
+    case 'settings': return <SettingsIcon color={color} />;
   }
 }
 
@@ -77,7 +71,7 @@ export function FloatingTabBar({ activeTab, onTabPress }: FloatingTabBarProps) {
     <View style={styles.inner}>
       {TABS.map(({ key, label }) => {
         const isActive = key === activeTab;
-        const iconColor = isActive ? Colors.ink : Colors.textDisabled;
+        const iconColor = isActive ? Colors.ink : '#8E8E93';
 
         return (
           <TouchableOpacity
@@ -90,9 +84,7 @@ export function FloatingTabBar({ activeTab, onTabPress }: FloatingTabBarProps) {
             accessibilityState={{ selected: isActive }}
           >
             <TabIcon tabKey={key} color={iconColor} />
-            {isActive && (
-              <Text style={styles.tabLabel}>{label}</Text>
-            )}
+            {isActive && <Text style={styles.tabLabel}>{label}</Text>}
           </TouchableOpacity>
         );
       })}
@@ -101,17 +93,12 @@ export function FloatingTabBar({ activeTab, onTabPress }: FloatingTabBarProps) {
 
   if (isIOS) {
     return (
-      <BlurView
-        intensity={80}
-        tint="light"
-        style={styles.container}
-      >
+      <BlurView intensity={90} tint="extraLight" style={styles.container}>
         {inner}
       </BlurView>
     );
   }
 
-  // Android fallback — solid-ish bg
   return (
     <View style={[styles.container, styles.containerFallback]}>
       {inner}
@@ -122,13 +109,17 @@ export function FloatingTabBar({ activeTab, onTabPress }: FloatingTabBarProps) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 26,
+    bottom: 36,
     alignSelf: 'center',
     borderRadius: 26,
     borderWidth: 1,
-    borderColor: Colors.navBorder,
+    borderColor: 'rgba(255, 255, 255, 0.95)',
     overflow: 'hidden',
-    ...Shadow.nav,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.14,
+    shadowRadius: 24,
+    elevation: 12,
   },
   containerFallback: {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -138,8 +129,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     padding: 7,
-    // On iOS the BlurView provides the bg; on Android containerFallback does.
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
   },
   tabButton: {
     flexDirection: 'row',

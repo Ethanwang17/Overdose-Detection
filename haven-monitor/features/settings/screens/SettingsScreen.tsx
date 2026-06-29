@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { Colors, Spacing, FontSize, FontWeight, Radius } from '../../../theme';
 
@@ -63,7 +64,11 @@ interface SettingCardProps {
 }
 
 const SettingCard: React.FC<SettingCardProps> = ({ children }) => (
-  <View style={styles.card}>{children}</View>
+  <View style={styles.card}>
+    <BlurView intensity={60} tint="light" style={StyleSheet.absoluteFill} />
+    <View style={styles.cardOverlay} />
+    {children}
+  </View>
 );
 
 // ── Main Screen ──────────────────────────────────────────────────────────────
@@ -204,7 +209,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.bgGray,
+    backgroundColor: '#EEF0F5',
   },
   scroll: {
     flex: 1,
@@ -216,9 +221,10 @@ const styles = StyleSheet.create({
     fontSize: FontSize.heading1,
     fontWeight: FontWeight.bold,
     color: Colors.ink,
-    paddingHorizontal: Spacing.screen,
+    paddingHorizontal: 24,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.base,
+    letterSpacing: -0.6,
   },
 
   // Section
@@ -240,11 +246,19 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    backgroundColor: Colors.white,
-    borderRadius: Radius.md,
+    borderRadius: 26,
     borderWidth: 1,
-    borderColor: Colors.borderCard,
+    borderColor: 'rgba(255, 255, 255, 0.95)',
     overflow: 'hidden',
+    shadowColor: '#8A90A8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  cardOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.78)',
   },
 
   // Row
