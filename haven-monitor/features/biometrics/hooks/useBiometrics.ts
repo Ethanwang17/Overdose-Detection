@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { biometricSimulator } from '../simulation/BiometricSimulator';
 import { useBiometricStore } from '../store/biometricStore';
+import { useAuthStore } from '../../authentication/store/authStore';
+import { VitalsService } from '../../../services/VitalsService';
 import { BIOMETRIC_UPDATE_INTERVAL_MS } from '../../../constants';
 import type { BiometricStatus } from '../../../types';
 
@@ -8,11 +10,21 @@ export function useBiometrics() {
   const { status, reading, batteryLevel, connectionQuality, isConnected, setReading, setStatus } = useBiometricStore();
   const emergencyTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { emergency, countdown, setEmergency, setCalling, setCountdown } = useBiometricStore();
+  // Use a ref so the subscribe callback always sees the latest userId
+  // without needing to restart the simulator when session loads.
+  const userIdRef = useRef<string | undefined>(undefined);
+  const session = useAuthStore((s) => s.session);
+  userIdRef.current = session?.user.id;
 
   useEffect(() => {
     biometricSimulator.setMode(status);
     biometricSimulator.start({ mode: status, updateIntervalMs: BIOMETRIC_UPDATE_INTERVAL_MS });
-    const unsub = biometricSimulator.subscribe((r) => setReading(r));
+    const unsub = biometricSimulator.subscribe((r) => {
+      setReading(r);
+      if (userIdRef.current) {
+        VitalsService.push(userIdRef.current, r.heartRate, r.spO2, r.respiratoryRate, r.status).catch(() => {});
+      }
+    });
     return () => {
       biometricSimulator.stop();
       unsub();

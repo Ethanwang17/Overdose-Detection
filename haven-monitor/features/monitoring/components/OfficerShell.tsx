@@ -11,9 +11,10 @@ import { StatusBar } from 'expo-status-bar';
 import Svg, { Line, Circle, Rect } from 'react-native-svg';
 import { Colors } from '../../../theme/colors';
 import ParoleOfficerDashboard from '../screens/ParoleOfficerDashboard';
+import AlertsScreen from '../../alerts/screens/AlertsScreen';
 import SettingsScreen from '../../settings/screens/SettingsScreen';
 
-type OfficerTab = 'patients' | 'settings';
+type OfficerTab = 'patients' | 'alerts' | 'settings';
 
 function PatientsIcon({ color }: { color: string }) {
   return (
@@ -32,6 +33,18 @@ function PatientsIcon({ color }: { color: string }) {
   );
 }
 
+function AlertsIcon({ color }: { color: string }) {
+  return (
+    <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
+      <Line x1="12" y1="2" x2="12" y2="4" stroke={color} strokeWidth={1.9} strokeLinecap="round" />
+      <Rect x="4" y="8" width="16" height="11" rx="3" stroke={color} strokeWidth={1.9} />
+      <Line x1="9" y1="19" x2="9" y2="21" stroke={color} strokeWidth={1.9} strokeLinecap="round" />
+      <Line x1="15" y1="19" x2="15" y2="21" stroke={color} strokeWidth={1.9} strokeLinecap="round" />
+      <Line x1="9" y1="21" x2="15" y2="21" stroke={color} strokeWidth={1.9} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
 function SettingsIcon({ color }: { color: string }) {
   return (
     <Svg width={22} height={22} viewBox="0 0 24 24" fill="none">
@@ -45,6 +58,7 @@ function SettingsIcon({ color }: { color: string }) {
 
 const OFFICER_TABS: Array<{ key: OfficerTab; label: string }> = [
   { key: 'patients', label: 'Patients' },
+  { key: 'alerts', label: 'Alerts' },
   { key: 'settings', label: 'Settings' },
 ];
 
@@ -65,6 +79,8 @@ function OfficerTabBar({ activeTab, onTabPress }: { activeTab: OfficerTab; onTab
           >
             {key === 'patients'
               ? <PatientsIcon color={iconColor} />
+              : key === 'alerts'
+              ? <AlertsIcon color={iconColor} />
               : <SettingsIcon color={iconColor} />}
             {isActive && <Text style={styles.tabLabel}>{label}</Text>}
           </TouchableOpacity>
@@ -90,6 +106,7 @@ export default function OfficerShell() {
     <View style={styles.container}>
       <StatusBar style="dark" />
       {activeTab === 'patients' && <ParoleOfficerDashboard />}
+      {activeTab === 'alerts' && <AlertsScreen />}
       {activeTab === 'settings' && <SettingsScreen />}
       <OfficerTabBar activeTab={activeTab} onTabPress={setActiveTab} />
     </View>
