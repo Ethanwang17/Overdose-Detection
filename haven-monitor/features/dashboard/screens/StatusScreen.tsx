@@ -8,6 +8,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useBiometricStore } from '../../../features/biometrics/store/biometricStore';
+import { useHealthKitVitals } from '../../biometrics/hooks/useHealthKitVitals';
+import { useVitalsSync } from '../../biometrics/hooks/useVitalsSync';
+import { useAuthStore } from '../../authentication/store/authStore';
 import { HealthService } from '../../../services/HealthService';
 import StatusCard from '../components/StatusCard';
 import VitalMetric from '../components/VitalMetric';
@@ -30,7 +33,14 @@ export default function StatusScreen() {
     stopEmergency,
     setStatus,
     getVitalStatus,
+    demoActive,
   } = useBiometricStore();
+
+  const profile = useAuthStore((s) => s.profile);
+  const displayName = profile?.name ?? 'there';
+
+  useHealthKitVitals(!demoActive);
+  useVitalsSync();
 
   const [demoOpen, setDemoOpen] = useState(false);
 
@@ -76,7 +86,7 @@ export default function StatusScreen() {
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>Hello</Text>
-            <Text style={styles.name}>Alex Morgan</Text>
+            <Text style={styles.name}>{displayName}</Text>
           </View>
           <TouchableOpacity
             style={styles.demoButton}
