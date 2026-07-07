@@ -13,13 +13,12 @@ export const AuthService = {
   },
 
   async registerPatient(email: string, password: string, name: string, officerCode: string) {
-    // Validate officer invite code
-    const { data: officer, error: officerErr } = await supabase
-      .from('parole_officers')
-      .select('id')
-      .eq('invite_code', officerCode.trim().toUpperCase())
-      .single();
-    if (officerErr || !officer) throw new Error('Invalid officer code. Please check with your parole officer.');
+    // Validate officer invite code via SECURITY DEFINER RPC — the
+    // parole_officers table is not directly readable by clients (RLS).
+    const { data: officerId, error: officerErr } = await supabase.rpc('validate_officer_code', {
+      p_code: officerCode,
+    });
+    if (officerErr || !officerId) throw new Error('Invalid officer code. Please check with your parole officer.');
 
     // Create auth user
     const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { name } } });
@@ -31,21 +30,19 @@ export const AuthService = {
       name,
       email,
       role: 'patient',
-      officer_id: officer.id,
+      officer_id: officerId,
     });
 
     return data;
   },
 
   async registerOfficer(email: string, password: string, name: string, adminCode: string) {
-    // Validate admin code
-    const { data: code, error: codeErr } = await supabase
-      .from('admin_codes')
-      .select('id')
-      .eq('code', adminCode.trim().toUpperCase())
-      .eq('type', 'officer_registration')
-      .single();
-    if (codeErr || !code) throw new Error('Invalid admin code. Contact your Haven administrator.');
+    // Validate admin code via SECURITY DEFINER RPC — the admin_codes
+    // table is not directly readable by clients (RLS).
+    const { data: adminCodeId, error: codeErr } = await supabase.rpc('validate_admin_code', {
+      p_code: adminCode,
+    });
+    if (codeErr || !adminCodeId) throw new Error('Invalid admin code. Contact your Haven administrator.');
 
     // Create auth user
     const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { name } } });
