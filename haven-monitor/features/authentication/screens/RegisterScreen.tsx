@@ -57,11 +57,7 @@ export default function RegisterScreen() {
             [{ text: 'Go to Sign In', onPress: () => router.replace('/(auth)/login') }]
           );
         } else {
-          Alert.alert(
-            'Account created!',
-            `Your officer invite code is:\n\n${result.inviteCode}\n\nShare this with your patients so they can link to your account.`,
-            [{ text: 'Continue', onPress: () => router.replace('/(app)') }]
-          );
+          router.replace({ pathname: '/officer-invite', params: { code: result.inviteCode } });
         }
       } else {
         const result = await AuthService.registerPatient(email.trim(), password, name.trim(), code.trim());
