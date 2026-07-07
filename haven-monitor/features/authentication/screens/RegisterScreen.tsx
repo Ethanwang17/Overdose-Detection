@@ -50,14 +50,30 @@ export default function RegisterScreen() {
     try {
       if (isOfficer) {
         const result = await AuthService.registerOfficer(email.trim(), password, name.trim(), code.trim());
-        Alert.alert(
-          'Account created!',
-          `Your officer invite code is:\n\n${result.inviteCode}\n\nShare this with your patients so they can link to your account.`,
-          [{ text: 'Continue', onPress: () => router.replace('/(app)') }]
-        );
+        if (result.needsEmailConfirmation) {
+          Alert.alert(
+            'Confirm your email',
+            `We sent a confirmation link to ${email.trim()}. Open it, then sign in.\n\nYour officer invite code is:\n\n${result.inviteCode}\n\nShare this with your patients once you're signed in.`,
+            [{ text: 'Go to Sign In', onPress: () => router.replace('/(auth)/login') }]
+          );
+        } else {
+          Alert.alert(
+            'Account created!',
+            `Your officer invite code is:\n\n${result.inviteCode}\n\nShare this with your patients so they can link to your account.`,
+            [{ text: 'Continue', onPress: () => router.replace('/(app)') }]
+          );
+        }
       } else {
-        await AuthService.registerPatient(email.trim(), password, name.trim(), code.trim());
-        router.replace('/onboarding');
+        const result = await AuthService.registerPatient(email.trim(), password, name.trim(), code.trim());
+        if (result.needsEmailConfirmation) {
+          Alert.alert(
+            'Confirm your email',
+            `We sent a confirmation link to ${email.trim()}. Open it, then sign in to finish setting up your account.`,
+            [{ text: 'Go to Sign In', onPress: () => router.replace('/(auth)/login') }]
+          );
+        } else {
+          router.replace('/onboarding');
+        }
       }
     } catch (err: any) {
       Alert.alert('Registration failed', err.message ?? 'Something went wrong. Please try again.');

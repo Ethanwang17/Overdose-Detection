@@ -29,7 +29,15 @@ export default function LoginScreen() {
       await AuthService.signIn(email.trim(), password);
       router.replace('/(app)');
     } catch (err: any) {
-      Alert.alert('Sign in failed', err.message ?? 'Please check your credentials and try again.');
+      const message: string = err?.message ?? '';
+      if (message.toLowerCase().includes('email not confirmed')) {
+        Alert.alert(
+          'Email not confirmed',
+          'Please open the confirmation link we emailed you, then sign in again.'
+        );
+      } else {
+        Alert.alert('Sign in failed', message || 'Please check your credentials and try again.');
+      }
     } finally {
       setIsLoading(false);
     }

@@ -4,6 +4,7 @@ import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_7
 import * as SplashScreen from 'expo-splash-screen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
+import type { Session } from '@supabase/supabase-js';
 import { AuthService } from '../services/AuthService';
 import { useAuthStore } from '../features/authentication/store/authStore';
 
@@ -16,7 +17,7 @@ const queryClient = new QueryClient({
 });
 
 export default function RootLayout() {
-  const { setSession, setProfile, setLoading, clear } = useAuthStore();
+  const { setSession, setProfile, setLoading, setError, clear } = useAuthStore();
 
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -26,28 +27,31 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    // ensureProfile also creates the profile/parole_officers rows for
+    // accounts whose registration was interrupted by email confirmation.
+    const loadProfile = async (session: Session) => {
+      try {
+        const profile = await AuthService.ensureProfile(session.user);
+        setProfile(profile);
+        setError(null);
+      } catch (err) {
+        // Session exists but no usable profile — AppShell shows the
+        // finish-setup screen with this message.
+        setProfile(null);
+        setError(err instanceof Error ? err.message : 'Could not load your profile.');
+      }
+    };
+
     AuthService.getSession().then(async (session) => {
       setSession(session);
-      if (session) {
-        try {
-          const profile = await AuthService.fetchProfile(session.user.id);
-          setProfile(profile);
-        } catch {
-          setProfile(null);
-        }
-      }
+      if (session) await loadProfile(session);
       setLoading(false);
     });
 
     const { data: { subscription } } = AuthService.onAuthStateChange(async (event, session) => {
       setSession(session);
       if (session) {
-        try {
-          const profile = await AuthService.fetchProfile(session.user.id);
-          setProfile(profile);
-        } catch {
-          setProfile(null);
-        }
+        await loadProfile(session);
       } else {
         clear();
       }

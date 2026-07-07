@@ -7,6 +7,7 @@ import StatusScreen from '../../features/dashboard/screens/StatusScreen';
 import AlertsScreen from '../../features/alerts/screens/AlertsScreen';
 import SettingsScreen from '../../features/settings/screens/SettingsScreen';
 import OfficerShell from '../../features/monitoring/components/OfficerShell';
+import CompleteSetupScreen from '../../features/authentication/screens/CompleteSetupScreen';
 import { useAuthStore } from '../../features/authentication/store/authStore';
 import { LocationService } from '../../services/LocationService';
 import { useVitalsSync } from '../../features/biometrics/hooks/useVitalsSync';
@@ -16,7 +17,7 @@ const LOCATION_SYNC_MS = 60_000;
 type Tab = 'status' | 'alerts' | 'settings';
 
 export default function AppShell() {
-  const { profile, session } = useAuthStore();
+  const { profile, session, error } = useAuthStore();
 
   const [activeTab, setActiveTab] = useState<Tab>('status');
 
@@ -39,7 +40,10 @@ export default function AppShell() {
   }, [profile?.role, session?.user.id]);
 
   const isLoading = useAuthStore((s) => s.isLoading);
-  if (isLoading || !profile) return null;
+  if (isLoading || (!profile && !error)) return null;
+  // Signed in but profile creation failed (e.g. registration interrupted
+  // by email confirmation) — offer recovery instead of a blank screen.
+  if (!profile) return <CompleteSetupScreen />;
 
   if (profile.role === 'parole_officer') {
     return <OfficerShell />;
