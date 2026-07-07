@@ -22,7 +22,13 @@ export function useBiometrics() {
     const unsub = biometricSimulator.subscribe((r) => {
       setReading(r);
       if (userIdRef.current) {
-        VitalsService.push(userIdRef.current, r.heartRate, r.spO2, r.respiratoryRate, r.status).catch(() => {});
+        VitalsService.push(
+          userIdRef.current,
+          r.heartRate,
+          r.spo2,
+          r.respiratoryRate,
+          useBiometricStore.getState().status
+        ).catch(() => {});
       }
     });
     return () => {

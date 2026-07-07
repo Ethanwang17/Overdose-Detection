@@ -2,6 +2,7 @@ export const APP_NAME = 'Haven';
 export const APP_VERSION = '1.0.0';
 
 export const BIOMETRIC_UPDATE_INTERVAL_MS = 3000;
+export const HEALTHKIT_POLL_INTERVAL_MS = 15_000;
 export const EMERGENCY_COUNTDOWN_SECONDS = 30;
 export const BACKGROUND_SYNC_INTERVAL_MS = 60_000;
 

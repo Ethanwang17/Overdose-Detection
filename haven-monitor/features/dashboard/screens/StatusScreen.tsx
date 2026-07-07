@@ -8,6 +8,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useBiometricStore } from '../../../features/biometrics/store/biometricStore';
+import { HealthService } from '../../../services/HealthService';
 import StatusCard from '../components/StatusCard';
 import VitalMetric from '../components/VitalMetric';
 import EmergencyOverlay from '../components/EmergencyOverlay';
@@ -24,6 +25,7 @@ export default function StatusScreen() {
     setCalling,
     clearCountdownTimer,
     changeMode,
+    resumeLive,
     startEmergency,
     stopEmergency,
     setStatus,
@@ -161,6 +163,14 @@ export default function StatusScreen() {
           setDemoOpen(false);
           router.replace('/onboarding');
         }}
+        onResumeLive={
+          HealthService.isAvailable()
+            ? () => {
+                resumeLive();
+                setDemoOpen(false);
+              }
+            : undefined
+        }
       />
     </SafeAreaView>
   );

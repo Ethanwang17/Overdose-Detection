@@ -15,6 +15,9 @@ interface DemoSheetProps {
   onSetOverdose: () => void;
   onTriggerEmergency: () => void;
   onRestartOnboarding: () => void;
+  // Present only when HealthKit is a live data source on this build —
+  // hands the display back from demo values to real samples.
+  onResumeLive?: () => void;
 }
 
 const STATUS_OPTIONS = [
@@ -52,6 +55,7 @@ export default function DemoSheet({
   onSetOverdose,
   onTriggerEmergency,
   onRestartOnboarding,
+  onResumeLive,
 }: DemoSheetProps) {
   const handlers = { normal: onSetNormal, elevated: onSetElevated, overdose: onSetOverdose };
 
@@ -101,6 +105,18 @@ export default function DemoSheet({
             <Text style={styles.emergencyLabel}>Trigger Emergency Alert</Text>
             <Text style={styles.emergencyDesc}>Starts 30-second countdown immediately</Text>
           </TouchableOpacity>
+
+          {/* Resume live HealthKit data */}
+          {onResumeLive && (
+            <TouchableOpacity
+              style={styles.liveButton}
+              onPress={onResumeLive}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.liveLabel}>Resume Live Data</Text>
+              <Text style={styles.liveDesc}>Show real readings from Apple Health</Text>
+            </TouchableOpacity>
+          )}
 
           {/* Restart Onboarding */}
           <TouchableOpacity
@@ -196,6 +212,25 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     paddingVertical: 16,
     paddingHorizontal: 20,
+  },
+  liveButton: {
+    backgroundColor: 'rgba(48, 161, 92, 0.10)',
+    borderRadius: 18,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  liveLabel: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F7A42',
+    letterSpacing: -0.2,
+  },
+  liveDesc: {
+    fontSize: 13,
+    color: '#1F7A42',
+    opacity: 0.75,
+    marginTop: 3,
   },
   emergencyLabel: {
     fontSize: 16,

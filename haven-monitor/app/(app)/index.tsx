@@ -11,6 +11,7 @@ import CompleteSetupScreen from '../../features/authentication/screens/CompleteS
 import { useAuthStore } from '../../features/authentication/store/authStore';
 import { LocationService } from '../../services/LocationService';
 import { useVitalsSync } from '../../features/biometrics/hooks/useVitalsSync';
+import { useHealthKitVitals } from '../../features/biometrics/hooks/useHealthKitVitals';
 
 const LOCATION_SYNC_MS = 60_000;
 
@@ -23,6 +24,10 @@ export default function AppShell() {
 
   // Patient: push vitals to Supabase on every store change (catches demo mode switches too)
   useVitalsSync();
+
+  // Patient: pull real HealthKit samples into the store (dev/prod builds
+  // on iOS only — no-op in Expo Go and on Android)
+  useHealthKitVitals(profile?.role === 'patient');
 
   // Patient: sync location every 60s
   const locationTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);

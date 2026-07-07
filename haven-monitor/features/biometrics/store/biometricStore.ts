@@ -36,6 +36,9 @@ interface BiometricState {
   calling: boolean;
   countdown: number;
   demoOpen: boolean;
+  // True while the Demo sheet drives the display — live HealthKit polling
+  // (useHealthKitVitals) stands down until resumeLive() is called.
+  demoActive: boolean;
   countdownTimer: ReturnType<typeof setInterval> | null;
 
   setStatus: (status: BiometricStatus) => void;
@@ -49,6 +52,7 @@ interface BiometricState {
 
   // Demo / StatusScreen helpers
   changeMode: (mode: BiometricStatus) => void;
+  resumeLive: () => void;
   startEmergency: () => void;
   stopEmergency: () => void;
   clearCountdownTimer: () => void;
@@ -64,6 +68,7 @@ export const useBiometricStore = create<BiometricState>((set, get) => ({
   calling: false,
   countdown: 30,
   demoOpen: false,
+  demoActive: false,
   countdownTimer: null,
 
   setStatus: (status) => set({ status }),
@@ -89,9 +94,12 @@ export const useBiometricStore = create<BiometricState>((set, get) => ({
   changeMode: (mode) => {
     set({
       status: mode,
+      demoActive: true,
       reading: { ...MOCK_READINGS[mode], timestamp: new Date() },
     });
   },
+
+  resumeLive: () => set({ demoActive: false, status: 'normal' }),
 
   startEmergency: () => {
     get().clearCountdownTimer();
