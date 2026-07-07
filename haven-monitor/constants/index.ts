@@ -5,6 +5,13 @@ export const BIOMETRIC_UPDATE_INTERVAL_MS = 3000;
 export const EMERGENCY_COUNTDOWN_SECONDS = 30;
 export const BACKGROUND_SYNC_INTERVAL_MS = 60_000;
 
+// permissionType drives what the onboarding CTA requests (see
+// OnboardingScreen.handleCTA): 'location' and 'notifications' trigger real
+// OS permission prompts; 'health' shows the HealthKit sheet in custom
+// builds (react-native-health — unavailable in Expo Go and on Android);
+// 'contact' opens the system contact picker and persists to the
+// emergency_contacts table. 'device' is a PLACEHOLDER — there is no
+// wearable-pairing SDK yet, so its CTA only advances the carousel.
 export const ONBOARDING_STEPS = [
   { id: 0, isWelcome: true, cta: 'Get Started', permissionType: null },
   { id: 1, isWelcome: false, title: 'Connect your wearable', body: 'Haven reads your vitals through a compatible watch or band. Pair your device to begin monitoring.', cta: 'Connect Device', permissionType: 'device' },

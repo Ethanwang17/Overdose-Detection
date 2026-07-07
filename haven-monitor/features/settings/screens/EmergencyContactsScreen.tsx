@@ -1,43 +1,29 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Colors, Spacing, FontSize, FontWeight, Radius } from '../../../theme';
+import { EmergencyContactService } from '../../../services/EmergencyContactService';
+import { useAuthStore } from '../../authentication/store/authStore';
 import type { EmergencyContact } from '../../../types';
-
-// ── Mock Data ────────────────────────────────────────────────────────────────
-
-const MOCK_CONTACTS: EmergencyContact[] = [
-  {
-    id: '1',
-    name: 'Sarah Morgan',
-    relationship: 'Sister',
-    phone: '+1 (555) 234-5678',
-    notifyOnAlert: true,
-  },
-  {
-    id: '2',
-    name: 'Dr. James Lee',
-    relationship: 'Physician',
-    phone: '+1 (555) 876-5432',
-    notifyOnAlert: true,
-  },
-];
 
 // ── Contact Card ─────────────────────────────────────────────────────────────
 
 interface ContactCardProps {
   contact: EmergencyContact;
   isLast?: boolean;
+  onRemove: (contact: EmergencyContact) => void;
 }
 
-const ContactCard: React.FC<ContactCardProps> = ({ contact, isLast }) => (
+const ContactCard: React.FC<ContactCardProps> = ({ contact, isLast, onRemove }) => (
   <View style={[styles.contactCard, isLast && styles.contactCardLast]}>
     {/* Avatar initial */}
     <View style={styles.avatar}>
@@ -54,9 +40,20 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact, isLast }) => (
           </View>
         )}
       </View>
-      <Text style={styles.contactRelationship}>{contact.relationship}</Text>
+      {!!contact.relationship && (
+        <Text style={styles.contactRelationship}>{contact.relationship}</Text>
+      )}
       <Text style={styles.contactPhone}>{contact.phone}</Text>
     </View>
+
+    <TouchableOpacity
+      style={styles.removeButton}
+      onPress={() => onRemove(contact)}
+      activeOpacity={0.6}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+    >
+      <Text style={styles.removeButtonText}>Remove</Text>
+    </TouchableOpacity>
   </View>
 );
 
@@ -64,6 +61,67 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact, isLast }) => (
 
 export default function EmergencyContactsScreen() {
   const router = useRouter();
+  const session = useAuthStore((s) => s.session);
+
+  const [contacts, setContacts] = useState<EmergencyContact[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
+
+  const loadContacts = useCallback(async () => {
+    if (!session?.user.id) {
+      setIsLoading(false);
+      return;
+    }
+    try {
+      const rows = await EmergencyContactService.list(session.user.id);
+      setContacts(rows);
+    } catch {
+      // keep whatever is displayed; a failed refresh isn't fatal
+    } finally {
+      setIsLoading(false);
+    }
+  }, [session?.user.id]);
+
+  useEffect(() => {
+    loadContacts();
+  }, [loadContacts]);
+
+  const handleAdd = async () => {
+    if (isAdding || !session?.user.id) return;
+    setIsAdding(true);
+    try {
+      const picked = await EmergencyContactService.pickContact();
+      if (picked) {
+        await EmergencyContactService.add(session.user.id, picked);
+        await loadContacts();
+      }
+    } catch (err) {
+      Alert.alert(
+        'Could not add contact',
+        err instanceof Error ? err.message : 'Something went wrong. Please try again.'
+      );
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
+  const handleRemove = (contact: EmergencyContact) => {
+    Alert.alert('Remove contact', `Remove ${contact.name} from your emergency contacts?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Remove',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await EmergencyContactService.remove(contact.id);
+            setContacts((prev) => prev.filter((c) => c.id !== contact.id));
+          } catch {
+            Alert.alert('Could not remove contact', 'Please try again.');
+          }
+        },
+      },
+    ]);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -92,23 +150,39 @@ export default function EmergencyContactsScreen() {
         </Text>
 
         {/* Contact List */}
-        <View style={styles.cardList}>
-          {MOCK_CONTACTS.map((contact, index) => (
-            <ContactCard
-              key={contact.id}
-              contact={contact}
-              isLast={index === MOCK_CONTACTS.length - 1}
-            />
-          ))}
-        </View>
+        {isLoading ? (
+          <View style={styles.emptyState}>
+            <ActivityIndicator color={Colors.green} />
+          </View>
+        ) : contacts.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateText}>
+              No emergency contacts yet. Add someone you trust.
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.cardList}>
+            {contacts.map((contact, index) => (
+              <ContactCard
+                key={contact.id}
+                contact={contact}
+                isLast={index === contacts.length - 1}
+                onRemove={handleRemove}
+              />
+            ))}
+          </View>
+        )}
 
         {/* Add Contact Button */}
         <TouchableOpacity
-          style={styles.addButton}
+          style={[styles.addButton, isAdding && styles.addButtonDisabled]}
           activeOpacity={0.7}
-          onPress={() => {}}
+          onPress={handleAdd}
+          disabled={isAdding}
         >
-          <Text style={styles.addButtonText}>+ Add Emergency Contact</Text>
+          <Text style={styles.addButtonText}>
+            {isAdding ? 'Adding…' : '+ Add Emergency Contact'}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -242,6 +316,29 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
   },
 
+  // Remove
+  removeButton: {
+    paddingLeft: Spacing.sm,
+  },
+  removeButtonText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.medium,
+    color: Colors.signOut,
+  },
+
+  // Empty / loading state
+  emptyState: {
+    paddingVertical: Spacing.hero,
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
+  },
+  emptyStateText: {
+    fontSize: FontSize.base,
+    color: Colors.textTertiary,
+    textAlign: 'center',
+    lineHeight: 21,
+  },
+
   // Add Button
   addButton: {
     height: 54,
@@ -251,6 +348,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
+  },
+  addButtonDisabled: {
+    opacity: 0.6,
   },
   addButtonText: {
     fontSize: FontSize.xl,

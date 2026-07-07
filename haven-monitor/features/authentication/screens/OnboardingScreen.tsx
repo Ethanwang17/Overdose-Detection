@@ -11,12 +11,22 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors, Spacing, FontSize, FontWeight, Radius } from '../../../theme/colors';
 import { ONBOARDING_STEPS } from '../../../constants';
+import { LocationService } from '../../../services/LocationService';
+import { NotificationService } from '../../../services/NotificationService';
+import { HealthService } from '../../../services/HealthService';
+import { EmergencyContactService } from '../../../services/EmergencyContactService';
+import { useAuthStore } from '../store/authStore';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TOTAL_STEPS = ONBOARDING_STEPS.length; // 6 (indices 0–5)
 
 export default function OnboardingScreen() {
+  const session = useAuthStore((s) => s.session);
   const [currentStep, setCurrentStep] = useState(0);
+  const [isRequesting, setIsRequesting] = useState(false);
+  // Non-blocking notice shown on the following step when a permission was
+  // denied (e.g. "Location sharing is off"). Cleared on the next action.
+  const [permissionNote, setPermissionNote] = useState<string | null>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const animateTransition = (toStep: number) => {
@@ -34,7 +44,9 @@ export default function OnboardingScreen() {
     });
   };
 
-  const handleCTA = () => {
+  const step = ONBOARDING_STEPS[currentStep];
+
+  const advance = () => {
     if (currentStep < TOTAL_STEPS - 1) {
       animateTransition(currentStep + 1);
     } else {
@@ -42,13 +54,81 @@ export default function OnboardingScreen() {
     }
   };
 
+  // 'device' has no real SDK behind it yet (see ONBOARDING_STEPS in
+  // constants) — its CTA just advances. 'health' requires a custom build;
+  // in Expo Go / on Android it reports unavailable instead of pretending.
+  const handleCTA = async () => {
+    if (isRequesting) return;
+    let note: string | null = null;
+
+    if (step.permissionType === 'location' || step.permissionType === 'notifications') {
+      setIsRequesting(true);
+      try {
+        const granted =
+          step.permissionType === 'location'
+            ? await LocationService.requestPermissions()
+            : await NotificationService.requestPermissions();
+        if (!granted) {
+          note =
+            step.permissionType === 'location'
+              ? 'Location sharing is off. You can enable it anytime in Settings.'
+              : 'Notifications are off. You can enable them anytime in Settings.';
+        }
+      } catch {
+        note = 'Permission request failed. You can try again later in Settings.';
+      } finally {
+        setIsRequesting(false);
+      }
+    } else if (step.permissionType === 'health') {
+      setIsRequesting(true);
+      try {
+        const result = await HealthService.requestPermissions();
+        if (result === 'unavailable') {
+          note = "Health access isn't available in this build yet — it needs the full Haven app.";
+        } else if (result === 'denied') {
+          note = 'Health access is off. You can enable it anytime in the Health app.';
+        }
+      } catch {
+        note = 'Health access request failed. You can enable it later in the Health app.';
+      } finally {
+        setIsRequesting(false);
+      }
+    } else if (step.permissionType === 'contact') {
+      setIsRequesting(true);
+      try {
+        const picked = await EmergencyContactService.pickContact();
+        if (!picked) {
+          // Picker cancelled — stay on this step so the user can retry or skip.
+          setIsRequesting(false);
+          return;
+        }
+        if (session) {
+          await EmergencyContactService.add(session.user.id, picked);
+        } else {
+          await EmergencyContactService.stashPending(picked);
+          note = `${picked.name} will be saved once you sign in.`;
+        }
+      } catch (err) {
+        note =
+          err instanceof Error
+            ? err.message
+            : 'Could not add that contact. You can add one later in Settings.';
+      } finally {
+        setIsRequesting(false);
+      }
+    }
+
+    setPermissionNote(note);
+    advance();
+  };
+
   const handleSkip = () => {
+    if (isRequesting) return;
+    setPermissionNote(null);
     if (currentStep < TOTAL_STEPS - 1) {
       animateTransition(currentStep + 1);
     }
   };
-
-  const step = ONBOARDING_STEPS[currentStep];
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
@@ -96,8 +176,15 @@ export default function OnboardingScreen() {
 
       {/* CTA and skip */}
       <View style={styles.bottomArea}>
-        <TouchableOpacity style={styles.ctaButton} onPress={handleCTA} activeOpacity={0.85}>
-          <Text style={styles.ctaText}>{step.cta}</Text>
+        {permissionNote && <Text style={styles.permissionNote}>{permissionNote}</Text>}
+
+        <TouchableOpacity
+          style={[styles.ctaButton, isRequesting && styles.ctaButtonLoading]}
+          onPress={handleCTA}
+          activeOpacity={0.85}
+          disabled={isRequesting}
+        >
+          <Text style={styles.ctaText}>{isRequesting ? 'Requesting…' : step.cta}</Text>
         </TouchableOpacity>
 
         {!step.isWelcome && (
@@ -207,12 +294,21 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.huge,
     gap: Spacing.sm,
   },
+  permissionNote: {
+    fontSize: FontSize.sm,
+    color: Colors.textTertiary,
+    textAlign: 'center',
+    marginBottom: Spacing.xs,
+  },
   ctaButton: {
     height: 56,
     borderRadius: 16,
     backgroundColor: Colors.ink,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  ctaButtonLoading: {
+    opacity: 0.7,
   },
   ctaText: {
     fontSize: FontSize.xl,

@@ -40,6 +40,20 @@
       "expo-font",
       "expo-secure-store",
       [
+        "expo-contacts",
+        {
+          "contactsPermission": "Haven uses your contacts to add emergency contacts who are notified during an alert."
+        }
+      ],
+      "react-native-health",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Haven shares your location with emergency contacts when an alert is triggered.",
+          "locationAlwaysAndWhenInUsePermission": "Haven monitors your location in the background to support emergency response."
+        }
+      ],
+      [
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png",
