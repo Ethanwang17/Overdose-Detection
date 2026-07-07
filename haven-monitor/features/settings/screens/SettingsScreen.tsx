@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
+import * as Clipboard from 'expo-clipboard';
 import { Colors, Spacing, FontSize, FontWeight, Radius } from '../../../theme';
 import { AuthService } from '../../../services/AuthService';
+import { supabase } from '../../../lib/supabase';
+import { CopyIcon, CheckIcon } from '../../../shared/components/CopyIcons';
 import { useAuthStore } from '../../authentication/store/authStore';
 
 // ── Helper Components ────────────────────────────────────────────────────────
@@ -78,7 +81,41 @@ const SettingCard: React.FC<SettingCardProps> = ({ children }) => (
 export default function SettingsScreen() {
   const router = useRouter();
 
-  const { clear } = useAuthStore();
+  const { clear, session, profile } = useAuthStore();
+  const isOfficer = profile?.role === 'parole_officer';
+
+  // Officer invite code: metadata is a fast first guess, but the
+  // parole_officers row is authoritative (pre-existing officers have no
+  // invite_code in their auth metadata).
+  const [inviteCode, setInviteCode] = useState<string | null>(
+    (session?.user.user_metadata?.invite_code as string | undefined) ?? null
+  );
+  const [copied, setCopied] = useState(false);
+  const copiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!isOfficer || !session?.user.id) return;
+    let cancelled = false;
+    supabase
+      .from('parole_officers')
+      .select('invite_code')
+      .eq('user_id', session.user.id)
+      .single()
+      .then(({ data }) => {
+        if (!cancelled && data?.invite_code) setInviteCode(data.invite_code);
+      });
+    return () => { cancelled = true; };
+  }, [isOfficer, session?.user.id]);
+
+  useEffect(() => () => { if (copiedTimer.current) clearTimeout(copiedTimer.current); }, []);
+
+  const handleCopyInviteCode = async () => {
+    if (!inviteCode) return;
+    await Clipboard.setStringAsync(inviteCode);
+    setCopied(true);
+    if (copiedTimer.current) clearTimeout(copiedTimer.current);
+    copiedTimer.current = setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleSignOut = async () => {
     await AuthService.signOut();
@@ -96,8 +133,32 @@ export default function SettingsScreen() {
         {/* Page Title */}
         <Text style={styles.pageTitle}>Settings</Text>
 
+        {/* ── YOUR INVITE CODE (officers only) ── */}
+        {isOfficer && (
+          <View style={[styles.section, styles.firstSection]}>
+            <SectionHeader label="YOUR INVITE CODE" />
+            <SettingCard>
+              <TouchableOpacity
+                style={styles.inviteRow}
+                onPress={handleCopyInviteCode}
+                activeOpacity={0.6}
+              >
+                <View style={styles.inviteTextWrap}>
+                  <Text style={styles.inviteCode}>{inviteCode ?? '——'}</Text>
+                  <Text style={[styles.inviteHint, copied && styles.inviteHintCopied]}>
+                    {copied ? 'Copied to clipboard' : 'Share with patients to link them to you'}
+                  </Text>
+                </View>
+                {copied
+                  ? <CheckIcon color={Colors.green} />
+                  : <CopyIcon color={Colors.textTertiary} />}
+              </TouchableOpacity>
+            </SettingCard>
+          </View>
+        )}
+
         {/* ── DEVICES ── */}
-        <View style={[styles.section, styles.firstSection]}>
+        <View style={[styles.section, !isOfficer && styles.firstSection]}>
           <SectionHeader label="DEVICES" />
           <SettingCard>
             <SettingRow
@@ -296,6 +357,34 @@ const styles = StyleSheet.create({
     color: Colors.chevron,
     lineHeight: 22,
     marginTop: -1,
+  },
+
+  // Invite code (officers)
+  inviteRow: {
+    minHeight: 68,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 12,
+  },
+  inviteTextWrap: {
+    flex: 1,
+    paddingRight: Spacing.sm,
+  },
+  inviteCode: {
+    fontSize: FontSize.heading3,
+    fontWeight: FontWeight.bold,
+    color: Colors.ink,
+    letterSpacing: 2,
+  },
+  inviteHint: {
+    fontSize: FontSize.sm,
+    color: Colors.textTertiary,
+    marginTop: 3,
+  },
+  inviteHintCopied: {
+    color: Colors.green,
   },
 
   // Divider
