@@ -60,7 +60,7 @@ interface BiometricState {
 
 export const useBiometricStore = create<BiometricState>((set, get) => ({
   status: 'normal',
-  reading: MOCK_READINGS.normal,
+  reading: null,
   batteryLevel: 87,
   connectionQuality: 98,
   isConnected: true,
