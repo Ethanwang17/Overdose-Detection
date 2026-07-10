@@ -248,7 +248,7 @@ export default function SettingsScreen() {
             />
             <Divider />
             <SettingRow
-              label="alex.morgan@email.com"
+              label={session?.user.email ?? ''}
               onPress={() => {}}
               isLast
             />
