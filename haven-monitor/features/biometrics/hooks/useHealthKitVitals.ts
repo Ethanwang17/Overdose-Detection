@@ -31,6 +31,16 @@ export function useHealthKitVitals(enabled: boolean) {
 
       const status = classifyVitals(snapshot.heartRate, snapshot.spo2, snapshot.respiratoryRate);
       const prev = store.reading;
+      // Nothing new since the last poll — leave the reading untouched so
+      // useVitalsSync only pushes real changes.
+      const unchanged =
+        prev?.source !== 'demo' &&
+        prev?.timestamp.getTime() === snapshot.latestSampleAt.getTime() &&
+        prev?.heartRate === (snapshot.heartRate ?? prev?.heartRate) &&
+        prev?.spo2 === (snapshot.spo2 ?? prev?.spo2) &&
+        prev?.respiratoryRate === (snapshot.respiratoryRate ?? prev?.respiratoryRate);
+      if (unchanged && store.status === status) return;
+
       store.setReading({
         // Carry the previous value forward for metrics without a fresh
         // sample (e.g. respiratory rate only records during sleep).
@@ -39,6 +49,7 @@ export function useHealthKitVitals(enabled: boolean) {
         respiratoryRate: snapshot.respiratoryRate ?? prev?.respiratoryRate ?? 0,
         movement: prev?.movement ?? 0,
         timestamp: snapshot.latestSampleAt,
+        source: snapshot.source,
         batteryLevel: store.batteryLevel,
         connectionQuality: store.connectionQuality,
       });

@@ -12,7 +12,10 @@ import {
 interface EmergencyOverlayProps {
   visible: boolean;
   countdown: number;
+  /** Countdown ran out or the patient asked for help — alert escalated */
   calling: boolean;
+  /** Number the call button dials, e.g. "911" */
+  emergencyNumber: string;
   onImOk: () => void;
   onCallHelp: () => void;
 }
@@ -23,6 +26,7 @@ export default function EmergencyOverlay({
   visible,
   countdown,
   calling,
+  emergencyNumber,
   onImOk,
   onCallHelp,
 }: EmergencyOverlayProps) {
@@ -69,9 +73,9 @@ export default function EmergencyOverlay({
               <Text style={styles.emergencyLabel}>EMERGENCY</Text>
               <Text style={styles.title}>Possible Overdose Detected</Text>
               <Text style={styles.body}>
-                Haven is preparing to call for help. Tap{' '}
-                <Text style={styles.bodyBold}>I'm OK</Text> to cancel within the
-                countdown.
+                If you don't respond, Haven will escalate this to your parole officer
+                with your location. Tap <Text style={styles.bodyBold}>I'm OK</Text> to
+                cancel.
               </Text>
 
               {/* Countdown ring */}
@@ -93,7 +97,7 @@ export default function EmergencyOverlay({
               </View>
 
               <TouchableOpacity style={styles.callButton} onPress={onCallHelp} activeOpacity={0.85}>
-                <Text style={styles.callButtonText}>Call for Help</Text>
+                <Text style={styles.callButtonText}>Call {emergencyNumber}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.okButton} onPress={onImOk} activeOpacity={0.85}>
@@ -105,12 +109,15 @@ export default function EmergencyOverlay({
               <Animated.View
                 style={[styles.callingDot, { opacity: pulseAnim }]}
               />
-              <Text style={styles.callingTitle}>Calling for Help</Text>
+              <Text style={styles.callingTitle}>Alert Escalated</Text>
               <Text style={styles.callingBody}>
-                Emergency services and your contacts are being notified of your
-                location. Stay as calm as possible.
+                An alert with your location has been sent to your parole officer. If
+                you can, call {emergencyNumber} now.
               </Text>
-              <TouchableOpacity style={styles.cancelButton} onPress={onImOk} activeOpacity={0.85}>
+              <TouchableOpacity style={[styles.callButton, styles.callButtonCalling]} onPress={onCallHelp} activeOpacity={0.85}>
+                <Text style={styles.callButtonText}>Call {emergencyNumber}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.cancelButton, styles.cancelButtonSpaced]} onPress={onImOk} activeOpacity={0.85}>
                 <Text style={styles.cancelButtonText}>I'm OK — Cancel</Text>
               </TouchableOpacity>
             </>
@@ -267,5 +274,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     color: '#15151A',
+  },
+  callButtonCalling: {
+    marginTop: 0,
+  },
+  cancelButtonSpaced: {
+    marginTop: 10,
   },
 });

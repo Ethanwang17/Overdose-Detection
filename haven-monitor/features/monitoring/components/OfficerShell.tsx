@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,9 @@ import { Colors } from '../../../theme/colors';
 import ParoleOfficerDashboard from '../screens/ParoleOfficerDashboard';
 import AlertsScreen from '../../alerts/screens/AlertsScreen';
 import SettingsScreen from '../../settings/screens/SettingsScreen';
+import IncomingAlertModal from './IncomingAlertModal';
+import { useIncomingAlerts } from '../hooks/useIncomingAlerts';
+import { NotificationService } from '../../../services/NotificationService';
 
 type OfficerTab = 'patients' | 'alerts' | 'settings';
 
@@ -101,14 +104,27 @@ function OfficerTabBar({ activeTab, onTabPress }: { activeTab: OfficerTab; onTab
 
 export default function OfficerShell() {
   const [activeTab, setActiveTab] = useState<OfficerTab>('patients');
+  const incoming = useIncomingAlerts(true);
+
+  // Officers skip onboarding, where patients are asked for notifications —
+  // ask here so patient alerts can reach them. iOS only prompts once.
+  useEffect(() => {
+    NotificationService.requestPermissions().catch(() => {});
+  }, []);
 
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
       {activeTab === 'patients' && <ParoleOfficerDashboard />}
-      {activeTab === 'alerts' && <AlertsScreen />}
+      {activeTab === 'alerts' && <AlertsScreen forOfficer />}
       {activeTab === 'settings' && <SettingsScreen />}
       <OfficerTabBar activeTab={activeTab} onTabPress={setActiveTab} />
+      <IncomingAlertModal
+        alert={incoming.current}
+        pending={incoming.pending}
+        onAcknowledge={incoming.acknowledge}
+        onLater={incoming.dismiss}
+      />
     </View>
   );
 }

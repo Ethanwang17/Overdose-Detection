@@ -6,8 +6,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import type { Session } from '@supabase/supabase-js';
 import { AuthService } from '../services/AuthService';
-import { EmergencyContactService } from '../services/EmergencyContactService';
 import { useAuthStore } from '../features/authentication/store/authStore';
+import { useReadinessStore } from '../features/onboarding/store/readinessStore';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,8 +35,6 @@ export default function RootLayout() {
         const profile = await AuthService.ensureProfile(session.user);
         setProfile(profile);
         setError(null);
-        // Save any emergency contact picked during pre-sign-in onboarding.
-        EmergencyContactService.flushPending(session.user.id).catch(() => {});
       } catch (err) {
         // Session exists but no usable profile — AppShell shows the
         // finish-setup screen with this message.
@@ -57,6 +55,7 @@ export default function RootLayout() {
         await loadProfile(session);
       } else {
         clear();
+        useReadinessStore.getState().reset();
       }
       setLoading(false);
     });

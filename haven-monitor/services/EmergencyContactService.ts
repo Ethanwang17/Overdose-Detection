@@ -1,15 +1,15 @@
 import * as Contacts from 'expo-contacts';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
 import type { EmergencyContact } from '../types';
 
-// Onboarding can run before sign-in, so a contact picked there is stashed
-// locally and flushed to Supabase once a session exists (see app/_layout).
-const PENDING_KEY = 'haven.pendingEmergencyContact';
+// Who can write what is enforced by RLS (database/policies/003): a patient
+// may add a contact only while they have none (onboarding); after that the
+// assigned officer adds and removes them.
 
 export interface PickedContact {
   name: string;
   phone: string;
+  relationship?: string;
 }
 
 function rowToContact(row: {
@@ -31,7 +31,8 @@ function rowToContact(row: {
 export const EmergencyContactService = {
   /**
    * Ask for contacts access and open the system contact picker.
-   * Resolves null if the user cancels the picker; rejects if access is denied.
+   * Resolves null if the user cancels the picker; rejects if access is
+   * denied or the chosen contact has no phone number.
    */
   async pickContact(): Promise<PickedContact | null> {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -44,7 +45,9 @@ export const EmergencyContactService = {
     const name =
       contact.name ?? [contact.firstName, contact.lastName].filter(Boolean).join(' ');
     const phone = contact.phoneNumbers?.[0]?.number ?? '';
-    if (!name && !phone) return null;
+    if (!phone) {
+      throw new Error(`${name || 'That contact'} has no phone number. Choose someone who can be called.`);
+    }
     return { name: name || phone, phone };
   },
 
@@ -58,11 +61,21 @@ export const EmergencyContactService = {
     return (data ?? []).map(rowToContact);
   },
 
+  async count(userId: string): Promise<number> {
+    const { count, error } = await supabase
+      .from('emergency_contacts')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId);
+    if (error) throw error;
+    return count ?? 0;
+  },
+
   async add(userId: string, contact: PickedContact): Promise<void> {
     const { error } = await supabase.from('emergency_contacts').insert({
       user_id: userId,
       name: contact.name,
       phone: contact.phone,
+      relationship: contact.relationship || null,
     });
     if (error) throw error;
   },
@@ -70,22 +83,5 @@ export const EmergencyContactService = {
   async remove(id: string): Promise<void> {
     const { error } = await supabase.from('emergency_contacts').delete().eq('id', id);
     if (error) throw error;
-  },
-
-  async stashPending(contact: PickedContact): Promise<void> {
-    await AsyncStorage.setItem(PENDING_KEY, JSON.stringify(contact));
-  },
-
-  async flushPending(userId: string): Promise<void> {
-    const raw = await AsyncStorage.getItem(PENDING_KEY);
-    if (!raw) return;
-    // Remove before inserting so concurrent auth events can't double-insert;
-    // restore on failure so the next launch retries.
-    await AsyncStorage.removeItem(PENDING_KEY);
-    try {
-      await EmergencyContactService.add(userId, JSON.parse(raw) as PickedContact);
-    } catch {
-      await AsyncStorage.setItem(PENDING_KEY, raw);
-    }
   },
 };

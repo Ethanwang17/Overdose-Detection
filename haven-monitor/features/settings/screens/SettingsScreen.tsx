@@ -1,20 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  AppState,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
+import * as Notifications from 'expo-notifications';
 import { Colors, Spacing, FontSize, FontWeight, Radius } from '../../../theme';
 import { AuthService } from '../../../services/AuthService';
+import { NotificationService } from '../../../services/NotificationService';
 import { supabase } from '../../../lib/supabase';
 import { CopyIcon, CheckIcon } from '../../../shared/components/CopyIcons';
 import { useAuthStore } from '../../authentication/store/authStore';
+import { useReadinessStore } from '../../onboarding/store/readinessStore';
 
 // ── Helper Components ────────────────────────────────────────────────────────
 
@@ -51,6 +56,7 @@ const SettingRow: React.FC<SettingRowProps> = ({
     style={styles.settingRow}
     onPress={onPress}
     activeOpacity={0.6}
+    disabled={!onPress}
   >
     <Text style={styles.settingLabel}>{label}</Text>
     <View style={styles.settingRight}>
@@ -117,6 +123,39 @@ export default function SettingsScreen() {
     copiedTimer.current = setTimeout(() => setCopied(false), 2000);
   };
 
+  // Officer: alerts arrive as notifications, so surface whether they're on.
+  // (Officers skip onboarding, where patients are asked.)
+  const [notificationsOn, setNotificationsOn] = useState<boolean | null>(null);
+  const refreshNotifications = useCallback(() => {
+    Notifications.getPermissionsAsync()
+      .then(({ status }) => setNotificationsOn(status === 'granted'))
+      .catch(() => setNotificationsOn(null));
+  }, []);
+  useEffect(() => {
+    if (!isOfficer) return;
+    refreshNotifications();
+    const sub = AppState.addEventListener('change', (s) => { if (s === 'active') refreshNotifications(); });
+    return () => sub.remove();
+  }, [isOfficer, refreshNotifications]);
+
+  const handleNotifications = async () => {
+    const { status, canAskAgain } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted' && canAskAgain) {
+      await NotificationService.requestPermissions();
+      refreshNotifications();
+    } else {
+      Linking.openSettings();
+    }
+  };
+
+  // Patient: watch status from the latest readiness check
+  const watch = useReadinessStore((s) => s.result?.watch);
+  const watchValue =
+    watch?.state === 'connected' ? 'Connected'
+      : watch?.state === 'unavailable' ? 'Unavailable'
+      : watch ? 'Not reporting' : undefined;
+  const watchColor = watch?.state === 'connected' ? Colors.green : Colors.amberDark;
+
   const handleSignOut = async () => {
     await AuthService.signOut();
     clear();
@@ -157,99 +196,52 @@ export default function SettingsScreen() {
           </View>
         )}
 
-        {/* ── DEVICES ── */}
-        <View style={[styles.section, !isOfficer && styles.firstSection]}>
-          <SectionHeader label="DEVICES" />
-          <SettingCard>
-            <SettingRow
-              label="Apple Watch Series 9"
-              value="Connected"
-              valueColor={Colors.green}
-              onPress={() => router.push('/settings/devices')}
-            />
-            <Divider />
-            <SettingRow
-              label="Add a Device"
-              onPress={() => router.push('/settings/devices')}
-              isLast
-            />
-          </SettingCard>
-        </View>
+        {/* Patients: only reconnecting their watch and changing their
+            password. Emergency contacts and the officer link are managed by
+            the officer; monitoring behavior isn't the patient's to change. */}
+        {!isOfficer && (
+          <View style={[styles.section, styles.firstSection]}>
+            <SectionHeader label="APPLE WATCH" />
+            <SettingCard>
+              <SettingRow
+                label="Reconnect Apple Watch"
+                value={watchValue}
+                valueColor={watchColor}
+                onPress={() => router.push('/settings/device')}
+                isLast
+              />
+            </SettingCard>
+          </View>
+        )}
 
-        {/* ── MONITORING ── */}
-        <View style={styles.section}>
-          <SectionHeader label="MONITORING" />
-          <SettingCard>
-            <SettingRow
-              label="Detection Sensitivity"
-              value="Standard"
-              onPress={() => {}}
-            />
-            <Divider />
-            <SettingRow
-              label="Alert Countdown"
-              value="30 seconds"
-              onPress={() => {}}
-              isLast
-            />
-          </SettingCard>
-        </View>
-
-        {/* ── ALERTS & CONTACTS ── */}
-        <View style={styles.section}>
-          <SectionHeader label="ALERTS & CONTACTS" />
-          <SettingCard>
-            <SettingRow
-              label="Notifications"
-              onPress={() => {}}
-            />
-            <Divider />
-            <SettingRow
-              label="Emergency Contacts"
-              value="2 people"
-              onPress={() => router.push('/settings/emergency-contacts')}
-            />
-            <Divider />
-            <SettingRow
-              label="Parole Officer"
-              value="Linked"
-              onPress={() => {}}
-              isLast
-            />
-          </SettingCard>
-        </View>
-
-        {/* ── PRIVACY ── */}
-        <View style={styles.section}>
-          <SectionHeader label="PRIVACY" />
-          <SettingCard>
-            <SettingRow
-              label="Data & Privacy"
-              onPress={() => {}}
-            />
-            <Divider />
-            <SettingRow
-              label="Location Sharing"
-              value="While monitoring"
-              onPress={() => {}}
-              isLast
-            />
-          </SettingCard>
-        </View>
+        {/* ── ALERTS (officers) ── */}
+        {isOfficer && (
+          <View style={styles.section}>
+            <SectionHeader label="ALERTS" />
+            <SettingCard>
+              <SettingRow
+                label="Alert Notifications"
+                value={notificationsOn === null ? undefined : notificationsOn ? 'On' : 'Off'}
+                valueColor={notificationsOn ? Colors.green : Colors.amberDark}
+                onPress={handleNotifications}
+                isLast
+              />
+            </SettingCard>
+          </View>
+        )}
 
         {/* ── ACCOUNT ── */}
         <View style={styles.section}>
           <SectionHeader label="ACCOUNT" />
           <SettingCard>
             <SettingRow
-              label="Subscription"
-              value="Haven Plus"
-              onPress={() => {}}
+              label={profile?.email ?? session?.user.email ?? ''}
+              showChevron={false}
             />
             <Divider />
             <SettingRow
-              label={session?.user.email ?? ''}
-              onPress={() => {}}
+              label="Change Password"
+              onPress={() => router.push('/settings/password')}
               isLast
             />
           </SettingCard>

@@ -6,12 +6,21 @@ export type UserRole = 'patient' | 'parole_officer' | 'medical_admin' | 'emergen
 
 export type BiometricStatus = 'normal' | 'elevated' | 'critical';
 
+/**
+ * Where a reading came from. 'manual' = typed into the Health app (trusted
+ * only in development builds), 'demo' = the Demo sheet. Stored with every
+ * vitals row and alert so the officer can tell real watch data from the rest.
+ */
+export type VitalSource = 'healthkit' | 'manual' | 'demo';
+
 export interface BiometricReading {
   heartRate: number;
   spo2: number;
   respiratoryRate: number;
   movement: number;
+  /** When the value was measured (HealthKit sample end), not when it was read */
   timestamp: Date;
+  source?: VitalSource;
 }
 
 export interface BiometricBaseline {
@@ -43,6 +52,17 @@ export interface AlertRecord {
   resolution: string;
   resolvedAt?: Date;
   createdAt: Date;
+  /** Absolute date + time, e.g. "Jul 8 · 2:41 PM" */
+  timeLabel: string;
+  /** Patient who raised the alert — shown in the officer view */
+  patientName: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  source: VitalSource | 'unknown';
+  /** Patient didn't answer the countdown (or asked for help) */
+  escalatedAt?: Date;
+  /** Officer confirmed they've seen it */
+  acknowledgedAt?: Date;
 }
 
 export interface EmergencyContact {
@@ -78,11 +98,9 @@ export interface DetectionSettings {
   enableBackgroundMonitoring: boolean;
 }
 
-export interface OnboardingStep {
-  id: number;
-  isWelcome: boolean;
-  title?: string;
-  body?: string;
-  cta: string;
-  permissionType?: 'device' | 'health' | 'location' | 'notifications' | 'contact';
-}
+/**
+ * Post-login patient onboarding steps. 'welcome' and 'notifications' only
+ * appear the first time; the rest reappear whenever what they set up is
+ * lost (see features/onboarding/readiness).
+ */
+export type OnboardingStepKey = 'welcome' | 'watch' | 'location' | 'notifications' | 'contact';

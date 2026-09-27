@@ -2,25 +2,59 @@ export const APP_NAME = 'Haven';
 export const APP_VERSION = '1.0.0';
 
 export const BIOMETRIC_UPDATE_INTERVAL_MS = 3000;
-export const HEALTHKIT_POLL_INTERVAL_MS = 15_000;
+export const HEALTHKIT_POLL_INTERVAL_MS = 5_000;
 export const EMERGENCY_COUNTDOWN_SECONDS = 30;
 export const BACKGROUND_SYNC_INTERVAL_MS = 60_000;
 
-// permissionType drives what the onboarding CTA requests (see
-// OnboardingScreen.handleCTA): 'location' and 'notifications' trigger real
-// OS permission prompts; 'health' shows the HealthKit sheet in custom
-// builds (react-native-health — unavailable in Expo Go and on Android);
-// 'contact' opens the system contact picker and persists to the
-// emergency_contacts table. 'device' is a PLACEHOLDER — there is no
-// wearable-pairing SDK yet, so its CTA only advances the carousel.
-export const ONBOARDING_STEPS = [
-  { id: 0, isWelcome: true, cta: 'Get Started', permissionType: null },
-  { id: 1, isWelcome: false, title: 'Connect your wearable', body: 'Haven reads your vitals through a compatible watch or band. Pair your device to begin monitoring.', cta: 'Connect Device', permissionType: 'device' },
-  { id: 2, isWelcome: false, title: 'Access health data', body: 'Heart rate, blood oxygen, and respiratory rate are read continuously to catch early signs of distress.', cta: 'Allow Health Access', permissionType: 'health' },
-  { id: 3, isWelcome: false, title: 'Share your location', body: 'If you ever need help, responders and your contacts can reach you faster.', cta: 'Allow Location', permissionType: 'location' },
-  { id: 4, isWelcome: false, title: 'Enable notifications', body: 'We only reach out when something needs your attention — never for anything else.', cta: 'Allow Notifications', permissionType: 'notifications' },
-  { id: 5, isWelcome: false, title: 'Add an emergency contact', body: 'Choose who Haven should notify the moment an emergency is detected.', cta: 'Add Contact', permissionType: 'contact' },
-] as const;
+// Vitals are pushed the moment they change; this re-sends the current
+// reading so the officer can tell the app is still online.
+export const VITALS_HEARTBEAT_MS = 15_000;
+
+// No trusted heart-rate sample from the watch for this long = disconnected,
+// which sends the patient back through the watch onboarding step. Apple
+// Watch records background heart rate every few minutes while worn.
+export const WATCH_STALE_MINUTES = 30;
+
+// How often the patient app re-checks watch/location while open (it also
+// re-checks every time the app returns to the foreground).
+export const READINESS_RECHECK_MS = 5 * 60_000;
+
+// The patient's latest push older than this shows as "App offline" to the
+// officer (3–4 missed heartbeats).
+export const APP_OFFLINE_AFTER_MS = 60_000;
+
+// Dialed by "Call for help" and the officer's call button. Override in
+// .env for test builds so a demo never rings real emergency services.
+export const EMERGENCY_NUMBER = process.env.EXPO_PUBLIC_EMERGENCY_NUMBER ?? '911';
+
+// Copy for the post-login patient onboarding. 'repair' variants are shown
+// when a step reappears because what it set up was lost.
+export const ONBOARDING_COPY = {
+  welcome: {
+    title: 'Haven',
+    body: 'Continuous monitoring that\nwatches over you, quietly.',
+  },
+  watch: {
+    title: 'Connect your Apple Watch',
+    repairTitle: 'Your Apple Watch disconnected',
+    body: 'Haven reads heart rate, blood oxygen and breathing from your Apple Watch through Apple Health. Wear your watch and allow Health access.',
+    repairBody: `Haven hasn't received heart-rate data from your watch in over ${WATCH_STALE_MINUTES} minutes. Put your watch on and make sure Health access for Haven is on.`,
+  },
+  location: {
+    title: 'Share your location',
+    repairTitle: 'Location is off',
+    body: 'If you ever need help, your parole officer and responders can reach you faster.',
+    repairBody: 'Haven can no longer see your location. Turn it back on to continue.',
+  },
+  notifications: {
+    title: 'Enable notifications',
+    body: 'We only reach out when something needs your attention — never for anything else.',
+  },
+  contact: {
+    title: 'Add an emergency contact',
+    body: 'Choose who should be reached if an emergency is detected. After setup, your parole officer manages your emergency contacts.',
+  },
+} as const;
 
 export const STATUS_CONFIG = {
   normal: {

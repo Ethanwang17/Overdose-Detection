@@ -20,15 +20,12 @@ export function useBiometrics() {
     biometricSimulator.setMode(status);
     biometricSimulator.start({ mode: status, updateIntervalMs: BIOMETRIC_UPDATE_INTERVAL_MS });
     const unsub = biometricSimulator.subscribe((r) => {
-      setReading(r);
+      // Simulator values are synthetic — tag them so they never pass as
+      // watch data on the officer's side.
+      const reading = { ...r, source: 'demo' as const };
+      setReading(reading);
       if (userIdRef.current) {
-        VitalsService.push(
-          userIdRef.current,
-          r.heartRate,
-          r.spo2,
-          r.respiratoryRate,
-          useBiometricStore.getState().status
-        ).catch(() => {});
+        VitalsService.push(userIdRef.current, reading, useBiometricStore.getState().status).catch(() => {});
       }
     });
     return () => {

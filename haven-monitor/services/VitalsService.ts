@@ -1,40 +1,23 @@
 import { supabase } from '../lib/supabase';
-
-export interface LatestVitals {
-  id: string;
-  user_id: string;
-  heart_rate: number;
-  spo2: number;
-  respiratory_rate: number;
-  status: 'normal' | 'elevated' | 'critical';
-  recorded_at: string;
-}
+import type { BiometricReading, BiometricStatus } from '../types';
 
 export const VitalsService = {
-  async push(
-    userId: string,
-    heartRate: number,
-    spo2: number,
-    respiratoryRate: number,
-    status: string,
-  ) {
-    await supabase.from('vitals').insert({
+  /**
+   * Record a reading. sampled_at is when it was measured; the server stamps
+   * recorded_at on arrival, so the officer can tell a fresh measurement from
+   * a heartbeat re-send of an old one — and the gap between the two is the
+   * watch-to-server latency.
+   */
+  async push(userId: string, reading: BiometricReading, status: BiometricStatus) {
+    const { error } = await supabase.from('vitals').insert({
       user_id: userId,
-      heart_rate: heartRate,
-      spo2,
-      respiratory_rate: respiratoryRate,
+      heart_rate: reading.heartRate,
+      spo2: reading.spo2,
+      respiratory_rate: reading.respiratoryRate,
       status,
+      source: reading.source ?? 'healthkit',
+      sampled_at: reading.timestamp.toISOString(),
     });
-  },
-
-  async getLatest(userId: string): Promise<LatestVitals | null> {
-    const { data } = await supabase
-      .from('vitals')
-      .select('*')
-      .eq('user_id', userId)
-      .order('recorded_at', { ascending: false })
-      .limit(1)
-      .single();
-    return data ?? null;
+    if (error) throw error;
   },
 };

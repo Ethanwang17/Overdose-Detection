@@ -1,20 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, Spacing, FontSize, FontWeight } from '../../../theme';
 import AlertItem from '../components/AlertItem';
 import { alertsRepository } from '../repositories/alertsRepository';
+import { AlertService } from '../../../services/AlertService';
 import type { AlertRecord } from '../../../types';
 
-const AlertsScreen: React.FC = () => {
+const ALERTS_POLL_MS = 5000;
+
+interface AlertsScreenProps {
+  /** Officer view: shows patient name, absolute time, and location per alert */
+  forOfficer?: boolean;
+}
+
+const AlertsScreen: React.FC<AlertsScreenProps> = ({ forOfficer = false }) => {
   const [alerts, setAlerts] = useState<AlertRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
-    alertsRepository.getAlerts().then((data) => {
-      setAlerts(data);
-      setLoading(false);
-    });
+    let cancelled = false;
+    const load = () =>
+      alertsRepository.getAlerts().then((data) => {
+        if (cancelled) return;
+        setAlerts(data);
+        setLoading(false);
+      });
+    load();
+    const timer = setInterval(load, ALERTS_POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [reloadKey]);
+
+  const acknowledge = useCallback(async (alertId: string) => {
+    try {
+      await AlertService.acknowledge(alertId);
+      setReloadKey((k) => k + 1);
+    } catch (err) {
+      Alert.alert('Could not acknowledge', err instanceof Error ? err.message : 'Please try again.');
+    }
   }, []);
 
   const elevatedCount = alerts.filter(a => a.severity === 'elevated').length;
@@ -30,7 +57,11 @@ const AlertsScreen: React.FC = () => {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Alerts</Text>
-          <Text style={styles.subtitle}>Elevated & critical events · past 30 days</Text>
+          <Text style={styles.subtitle}>
+            {forOfficer
+              ? 'Patient events · live · past 30 days'
+              : 'Elevated & critical events · past 30 days'}
+          </Text>
         </View>
 
         {/* Badge row */}
@@ -69,6 +100,14 @@ const AlertsScreen: React.FC = () => {
                 detail={alert.detail}
                 when={alert.when}
                 resolution={alert.resolution}
+                patientName={forOfficer ? alert.patientName : undefined}
+                timeLabel={alert.timeLabel}
+                latitude={forOfficer ? alert.latitude : undefined}
+                longitude={forOfficer ? alert.longitude : undefined}
+                isDemo={alert.source === 'demo'}
+                onAcknowledge={
+                  forOfficer && !alert.acknowledgedAt ? () => acknowledge(alert.id) : undefined
+                }
               />
             ))
           )}

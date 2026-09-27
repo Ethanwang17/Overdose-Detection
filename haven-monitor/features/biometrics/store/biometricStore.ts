@@ -95,7 +95,7 @@ export const useBiometricStore = create<BiometricState>((set, get) => ({
     set({
       status: mode,
       demoActive: true,
-      reading: { ...MOCK_READINGS[mode], timestamp: new Date() },
+      reading: { ...MOCK_READINGS[mode], timestamp: new Date(), source: 'demo' },
     });
   },
 

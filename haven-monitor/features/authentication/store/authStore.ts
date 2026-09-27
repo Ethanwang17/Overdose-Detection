@@ -7,6 +7,8 @@ export interface Profile {
   email: string;
   role: 'patient' | 'parole_officer';
   officer_id: string | null;
+  /** Set when a patient first finishes onboarding; unused for officers */
+  onboarded_at: string | null;
 }
 
 interface AuthState {

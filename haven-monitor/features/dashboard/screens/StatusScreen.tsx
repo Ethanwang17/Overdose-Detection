@@ -1,20 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
+  Linking,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 import { useBiometricStore } from '../../../features/biometrics/store/biometricStore';
 import { useAuthStore } from '../../authentication/store/authStore';
+import { useReadinessStore } from '../../onboarding/store/readinessStore';
 import { HealthService } from '../../../services/HealthService';
+import { AlertService } from '../../../services/AlertService';
 import StatusCard from '../components/StatusCard';
 import VitalMetric from '../components/VitalMetric';
 import EmergencyOverlay from '../components/EmergencyOverlay';
 import DemoSheet from '../components/DemoSheet';
 import { Colors, FontSize, FontWeight } from '../../../theme';
+import { EMERGENCY_NUMBER } from '../../../constants';
+
+async function callEmergencyNumber() {
+  const url = `tel:${EMERGENCY_NUMBER}`;
+  if (await Linking.canOpenURL(url)) {
+    Linking.openURL(url);
+  } else {
+    Alert.alert('Calling unavailable', `This device can't place calls. Call ${EMERGENCY_NUMBER} from a phone.`);
+  }
+}
 
 export default function StatusScreen() {
   const {
@@ -34,9 +47,39 @@ export default function StatusScreen() {
   } = useBiometricStore();
 
   const profile = useAuthStore((s) => s.profile);
+  const userId = useAuthStore((s) => s.session?.user.id);
   const displayName = profile?.name ?? 'there';
 
   const [demoOpen, setDemoOpen] = useState(false);
+
+  // The countdown ran out or the patient asked for help: escalate the open
+  // alert so their officer sees it isn't being handled.
+  const wasCalling = useRef(calling);
+  useEffect(() => {
+    if (calling && !wasCalling.current && userId) {
+      const current = useBiometricStore.getState().reading;
+      AlertService.escalate(
+        userId,
+        'Emergency countdown expired without a response',
+        current?.source ?? 'unknown',
+      ).catch(() => {});
+    }
+    wasCalling.current = calling;
+  }, [calling, userId]);
+
+  const handleCallHelp = () => {
+    setCalling(true);
+    clearCountdownTimer();
+    callEmergencyNumber();
+  };
+
+  const handleImOk = async () => {
+    stopEmergency();
+    if (userId) await AlertService.resolveOpen(userId, 'Marked OK by patient').catch(() => {});
+    // Resolve first so the demo's return to normal doesn't overwrite the
+    // resolution with "Vitals returned to normal".
+    if (useBiometricStore.getState().demoActive) changeMode('normal');
+  };
 
   const vitalStatus = getVitalStatus();
 
@@ -58,16 +101,19 @@ export default function StatusScreen() {
 
   // Vital note text based on status
   const getHrNote = () => {
+    if (!reading) return 'Waiting for data';
     if (status === 'elevated') return 'Above normal';
     if (status === 'critical') return 'Critically low';
     return 'Normal Range';
   };
   const getSpo2Note = () => {
+    if (!reading) return 'Waiting for data';
     if (status === 'critical') return 'Critically low';
     if (status === 'elevated') return 'Slightly low';
     return 'Normal Range';
   };
   const getRrNote = () => {
+    if (!reading) return 'Waiting for data';
     if (status === 'critical') return 'Critically low';
     if (status === 'elevated') return 'Above normal';
     return 'Normal Range';
@@ -82,26 +128,42 @@ export default function StatusScreen() {
             <Text style={styles.greeting}>Hello</Text>
             <Text style={styles.name}>{displayName}</Text>
           </View>
-          <TouchableOpacity
-            style={styles.demoButton}
-            onPress={() => setDemoOpen(true)}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.demoButtonText}>Demo</Text>
-          </TouchableOpacity>
+          {/* Development builds only: the demo can feed fake vitals to the
+              officer, so a real patient must never have it. */}
+          {__DEV__ && (
+            <TouchableOpacity
+              style={styles.demoButton}
+              onPress={() => setDemoOpen(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.demoButtonText}>Demo</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* Status Card */}
+        {/* Status Card — "Normal" is only claimed once there's a reading */}
         <View style={styles.cardWrapper}>
-          <StatusCard
-            status={vitalStatus.status}
-            label={vitalStatus.label}
-            sublabel={vitalStatus.sublabel}
-            updatedText={vitalStatus.updatedText}
-            dotColor={vitalStatus.dotColor}
-            tintColor={vitalStatus.tintColor}
-            textColor={vitalStatus.textColor}
-          />
+          {reading ? (
+            <StatusCard
+              status={vitalStatus.status}
+              label={vitalStatus.label}
+              sublabel={vitalStatus.sublabel}
+              updatedText={vitalStatus.updatedText}
+              dotColor={vitalStatus.dotColor}
+              tintColor={vitalStatus.tintColor}
+              textColor={vitalStatus.textColor}
+            />
+          ) : (
+            <StatusCard
+              status="normal"
+              label="No data yet"
+              sublabel="Waiting for the first reading from your Apple Watch."
+              updatedText="Not live"
+              dotColor={Colors.textDisabled}
+              tintColor="rgba(0, 0, 0, 0.05)"
+              textColor={Colors.textSecondary}
+            />
+          )}
         </View>
       </View>
 
@@ -135,11 +197,9 @@ export default function StatusScreen() {
         visible={emergency || calling}
         countdown={countdown}
         calling={calling}
-        onImOk={stopEmergency}
-        onCallHelp={() => {
-          setCalling(true);
-          clearCountdownTimer();
-        }}
+        emergencyNumber={EMERGENCY_NUMBER}
+        onImOk={handleImOk}
+        onCallHelp={handleCallHelp}
       />
 
       {/* Demo Bottom Sheet */}
@@ -147,6 +207,7 @@ export default function StatusScreen() {
         visible={demoOpen}
         onClose={() => setDemoOpen(false)}
         onSetNormal={() => {
+          stopEmergency();
           changeMode('normal');
           setDemoOpen(false);
         }}
@@ -157,6 +218,8 @@ export default function StatusScreen() {
         onSetOverdose={() => {
           changeMode('critical');
           setDemoOpen(false);
+          // Same response as real critical vitals (see useHealthKitVitals)
+          setTimeout(startEmergency, 650);
         }}
         onTriggerEmergency={() => {
           setDemoOpen(false);
@@ -165,7 +228,7 @@ export default function StatusScreen() {
         }}
         onRestartOnboarding={() => {
           setDemoOpen(false);
-          router.replace('/onboarding');
+          useReadinessStore.getState().forceFullOnboarding();
         }}
         onResumeLive={
           HealthService.isAvailable()

@@ -13,6 +13,8 @@ export default function Index() {
     );
   }
 
+  // Onboarding happens after sign-in, inside the patient shell — officers
+  // never see it.
   if (session) return <Redirect href="/(app)" />;
   return <Redirect href="/(auth)/login" />;
 }

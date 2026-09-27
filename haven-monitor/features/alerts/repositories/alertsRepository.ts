@@ -23,14 +23,46 @@ function timeAgo(isoString: string): string {
   return new Date(isoString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-function rowToRecord(row: {
+function absoluteTime(isoString: string): string {
+  const d = new Date(isoString);
+  const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  return `${date} · ${time}`;
+}
+
+interface AlertRow {
   id: string;
   severity: string;
   detail: string;
   resolution: string | null;
   resolved_at: string | null;
   created_at: string;
-}): AlertRecord {
+  latitude: number | null;
+  longitude: number | null;
+  source: AlertRecord['source'];
+  escalated_at: string | null;
+  acknowledged_at: string | null;
+  profiles: { name: string } | null;
+}
+
+const ALERT_COLUMNS =
+  'id, severity, detail, resolution, resolved_at, created_at, latitude, longitude, source, escalated_at, acknowledged_at, profiles(name)';
+
+// e.g. "Escalated · Marked OK by patient · Seen by officer 6:14 PM" — an
+// escalation stays visible after resolution, since it means the patient
+// didn't respond in time.
+function statusLine(row: AlertRow): string {
+  const parts: string[] = [];
+  if (row.escalated_at) parts.push('Escalated (no response)');
+  parts.push(row.resolution ?? 'Ongoing');
+  if (row.acknowledged_at) {
+    const seen = new Date(row.acknowledged_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    parts.push(`Seen by officer ${seen}`);
+  }
+  return parts.join(' · ');
+}
+
+function rowToRecord(row: AlertRow): AlertRecord {
   const severity = row.severity as 'elevated' | 'critical';
   const { dotColor, severityColor, severityLabel } = deriveColors(severity);
   return {
@@ -41,9 +73,16 @@ function rowToRecord(row: {
     severityLabel,
     detail: row.detail,
     when: timeAgo(row.created_at),
-    resolution: row.resolution ?? 'Resolved',
+    resolution: statusLine(row),
     resolvedAt: row.resolved_at ? new Date(row.resolved_at) : undefined,
     createdAt: new Date(row.created_at),
+    timeLabel: absoluteTime(row.created_at),
+    patientName: row.profiles?.name ?? null,
+    latitude: row.latitude,
+    longitude: row.longitude,
+    source: row.source,
+    escalatedAt: row.escalated_at ? new Date(row.escalated_at) : undefined,
+    acknowledgedAt: row.acknowledged_at ? new Date(row.acknowledged_at) : undefined,
   };
 }
 
@@ -52,23 +91,23 @@ class SupabaseAlertsRepository implements IAlertsRepository {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const { data, error } = await supabase
       .from('alerts')
-      .select('id, severity, detail, resolution, resolved_at, created_at')
+      .select(ALERT_COLUMNS)
       .gte('created_at', thirtyDaysAgo)
       .order('created_at', { ascending: false });
 
     if (error || !data) return [];
-    return data.map(rowToRecord);
+    return (data as unknown as AlertRow[]).map(rowToRecord);
   }
 
   async getAlertById(id: string): Promise<AlertRecord | null> {
     const { data, error } = await supabase
       .from('alerts')
-      .select('id, severity, detail, resolution, resolved_at, created_at')
+      .select(ALERT_COLUMNS)
       .eq('id', id)
       .single();
 
     if (error || !data) return null;
-    return rowToRecord(data);
+    return rowToRecord(data as unknown as AlertRow);
   }
 }
 

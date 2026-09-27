@@ -193,6 +193,22 @@ export const AuthService = {
     if (error) throw error;
   },
 
+  /** Change the signed-in user's password — no email round trip needed. */
+  async changePassword(newPassword: string) {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) throw error;
+  },
+
+  /** Patient finished first-time onboarding; returns the updated profile. */
+  async markOnboarded(userId: string): Promise<Profile> {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ onboarded_at: new Date().toISOString() })
+      .eq('id', userId);
+    if (error) throw error;
+    return this.fetchProfile(userId);
+  },
+
   async getSession() {
     const { data } = await supabase.auth.getSession();
     return data.session;

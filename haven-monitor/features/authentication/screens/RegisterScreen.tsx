@@ -68,7 +68,8 @@ export default function RegisterScreen() {
             [{ text: 'Go to Sign In', onPress: () => router.replace('/(auth)/login') }]
           );
         } else {
-          router.replace('/onboarding');
+          // The patient shell starts onboarding once the profile loads.
+          router.replace('/(app)');
         }
       }
     } catch (err: any) {
