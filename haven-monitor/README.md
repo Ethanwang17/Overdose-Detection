@@ -46,7 +46,7 @@ cp .env.example .env
 npx expo start
 ```
 
-Scan the QR code with Expo Go (iOS/Android) or press `i` for iOS simulator / `a` for Android emulator.
+The app uses native modules (HealthKit), so it needs a development build and won't run in Expo Go. For iOS simulator setup, including Xcode 27 workarounds, see [docs/ios-simulator.md](docs/ios-simulator.md).
 
 ---
 
