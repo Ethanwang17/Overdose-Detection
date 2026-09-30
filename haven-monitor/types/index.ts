@@ -1,6 +1,5 @@
 
 // Core TypeScript types for Haven Monitor
-// File: /Users/virurepalle/Code/Overdose-Detection/haven-monitor/types/index.ts
 
 export type UserRole = 'patient' | 'parole_officer' | 'medical_admin' | 'emergency_contact' | 'system_admin';
 
