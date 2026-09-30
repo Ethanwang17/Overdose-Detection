@@ -30,8 +30,10 @@ The app is built for harm-reduction programs, parole supervision, and recovery s
 
 ## Quick Start
 
+The app uses native modules (HealthKit), so it **won't run in Expo Go**. On iOS you build it with Xcode. The full walkthrough, including Xcode 27 notes and troubleshooting, is in **[docs/ios-simulator.md](docs/ios-simulator.md)**.
+
 ```bash
-# 1. Clone the repository
+# 1. Clone and enter the app folder (the repo root is an older prototype)
 git clone https://github.com/virurepalle/Overdose-Detection.git
 cd Overdose-Detection/haven-monitor
 
@@ -40,13 +42,19 @@ npm install
 
 # 3. Configure environment variables
 cp .env.example .env
-# Edit .env and add your Supabase credentials (see Supabase Setup below)
+# Edit .env and add the Supabase URL and anon key (see Supabase Setup below)
 
-# 4. Start the development server
-npx expo start
+# 4. Generate the native iOS project (ios/ is git-ignored)
+npx expo prebuild -p ios
+
+# 5. Start Metro and leave it running
+npx expo start --dev-client
+
+# 6. In a second terminal, open Xcode, pick an iPhone simulator, and press Run
+open ios/HavenMonitor.xcworkspace
 ```
 
-The app uses native modules (HealthKit), so it needs a development build and won't run in Expo Go. For iOS simulator setup, including Xcode 27 workarounds, see [docs/ios-simulator.md](docs/ios-simulator.md).
+CocoaPods needs a UTF-8 locale. If `pod install` crashes, add `export LANG=en_US.UTF-8` to `~/.zshrc`.
 
 ---
 
@@ -254,10 +262,7 @@ ESLint is configured for React Native + TypeScript. Prettier handles formatting.
 
 ### Running on Device
 
-```bash
-npx expo start
-# Press 'i' for iOS simulator, 'a' for Android emulator, or scan QR with Expo Go
-```
+See [docs/ios-simulator.md](docs/ios-simulator.md). Don't press `i` in Metro or use Expo Go; build and run from Xcode. After pulling changes to `app.json`, `plugins/`, or native dependencies, run `npx expo prebuild -p ios --clean`.
 
 ### Building for Production
 
