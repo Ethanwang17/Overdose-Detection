@@ -60,7 +60,7 @@ In a second terminal:
 open ios/HavenMonitor.xcworkspace
 ```
 
-Open the `.xcworkspace`, not the `.xcodeproj`. Pick an iPhone simulator in the toolbar and press **Run (▶)**. Xcode boots the simulator, installs the app, and connects it to Metro. The first build takes a few minutes; the app should open to the sign-in screen.
+Open the `.xcworkspace`, not the `.xcodeproj`. Pick an iPhone simulator in the toolbar and press **Run (▶)**. Xcode boots the simulator, installs the app, and connects it to Metro. The first build takes a few minutes; the app should open to the sign-in screen. On a fresh clone Metro also needs a minute to build the first JS bundle. If you see "Could not connect to development server", tap **Reload**.
 
 ## Day-to-day
 
@@ -78,6 +78,7 @@ Open the `.xcworkspace`, not the `.xcodeproj`. Pick an iPhone simulator in the t
 | `npx expo run:ios` or pressing `i` fails with "Can't determine id of Simulator app" | Xcode 27 no longer ships `Simulator.app`, so Expo's CLI can't open it. `sudo xcode-select` won't help. Use Xcode ▶ (step 5). |
 | `deployment target ... is set to 9.0/12.4/13.4, but the range ... is 15.0 to 27.0`, or `module 'Expo' has a minimum deployment target of iOS 16.0` | Your `ios/` predates the plugins. Run `npx expo prebuild -p ios --clean`. |
 | App stuck on the splash screen, or logs show `Application failed to launch: UIScene life cycle` | Same: run `npx expo prebuild -p ios --clean` and rebuild. |
+| Red screen: "Could not connect to development server" | Metro wasn't running yet, or was still building the first bundle (slow on a fresh clone). Make sure `npx expo start --dev-client` is running, then tap **Reload** or press `r` in Metro. |
 | Black screen, or Xcode hangs on "Launching HavenMonitor" | Make sure Metro is running. Run `xcrun simctl shutdown all`, then press ▶ again. |
 | `Unable to boot device in current state: Booted` | Xcode and the simulator disagree about its state. Run `xcrun simctl shutdown all`, quit Xcode (⌘Q), reopen the workspace, press ▶. A Mac restart clears it if it persists. |
 | Simulator window shows the phone off with a Start button while the app is running | The viewer lost its connection. Quit it (⌘Q) and reopen it from Xcode's Window menu. |
