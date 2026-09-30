@@ -34,7 +34,7 @@ The app uses native modules (HealthKit), so it **won't run in Expo Go**. On iOS 
 
 ```bash
 # 1. Clone and enter the app folder (the repo root is an older prototype)
-git clone https://github.com/virurepalle/Overdose-Detection.git
+git clone https://github.com/Ethanwang17/Overdose-Detection.git
 cd Overdose-Detection/haven-monitor
 
 # 2. Install dependencies
