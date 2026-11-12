@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <div className="container">
       <section className="hero">
-        <img src="/icon.png" alt="Haven app icon" />
+        <img src="/logo.svg" alt="Haven app icon" />
         <h1>Help, when it matters most.</h1>
         <p>
           {SITE.appName} uses wearable biometrics to spot the warning signs of a possible
