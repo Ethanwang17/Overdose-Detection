@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         <header className="site-header">
           <div className="container">
             <Link href="/" className="brand">
-              <img src="/icon.png" alt="" />
+              <img src="/logo.svg" alt="" />
               {SITE.appName}
             </Link>
             <nav className="nav">
