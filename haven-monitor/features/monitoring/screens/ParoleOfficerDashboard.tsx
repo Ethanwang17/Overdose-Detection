@@ -358,12 +358,19 @@ export default function ParoleOfficerDashboard() {
   const criticalCount = rows.filter((r) => r.vitals?.status === 'critical').length;
   const noDataCount = rows.filter((r) => !r.vitals).length;
 
-  // Sort: critical first, then elevated, then normal, then no-data
+  // Sort: critical first (even if the app went offline), then patients whose
+  // app is live by severity, then offline patients by severity, then no-data.
   const sorted = [...rows].sort((a, b) => {
     const order = { critical: 0, elevated: 1, normal: 2 };
-    const aO = a.vitals ? (order[a.vitals.status] ?? 3) : 3;
-    const bO = b.vitals ? (order[b.vitals.status] ?? 3) : 3;
-    return aO - bO;
+    const rank = (r: PatientRow) => {
+      if (!r.vitals) return 10;
+      const severity = order[r.vitals.status] ?? 3;
+      if (severity === 0) return 0;
+      const offline =
+        Date.now() - new Date(r.vitals.recorded_at).getTime() > APP_OFFLINE_AFTER_MS;
+      return offline ? 4 + severity : severity;
+    };
+    return rank(a) - rank(b);
   });
 
   return (
